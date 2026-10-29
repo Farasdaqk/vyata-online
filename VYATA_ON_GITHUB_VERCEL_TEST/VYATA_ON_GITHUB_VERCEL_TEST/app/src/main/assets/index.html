@@ -1,0 +1,2613 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="dark"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>VYATA ON - SECABA RINDAM III/SILIWANGI</title>
+  
+  <!-- PUSTAKA PDF OFFLINE (jsPDF & autoTable) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+  <!-- PUSTAKA EXCEL (SheetJS) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <style>
+    :root {
+      --bg-main: #060b07;
+      --bg-card: #0f1911;
+      --bg-card-hover: #152419;
+      --border-dark: #1b3020;
+      --border-gold: #c29b38;
+      --gold-primary: #f5c542;
+      --gold-hover: #ffd768;
+      --text-main: #f0fdf4;
+      --text-muted: #94a3b8;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --info: #38bdf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    svg { flex-shrink: 0; }
+    .icon-xs { width: 14px; height: 14px; }
+    .icon-sm { width: 18px; height: 18px; max-width: 18px; max-height: 18px; }
+    .icon-md { width: 22px; height: 22px; max-width: 22px; max-height: 22px; }
+
+    .hidden { display: none !important; }
+    .text-gold { color: var(--gold-primary); }
+    .text-muted { color: var(--text-muted); }
+    .text-success { color: var(--success); }
+    .text-danger { color: var(--danger); }
+    .text-xs { font-size: 11px; }
+    .text-sm { font-size: 13px; }
+    .font-bold { font-weight: 700; }
+
+    /* HEADER */
+    header {
+      background: linear-gradient(180deg, #132216 0%, #0a140c 100%);
+      border-bottom: 2px solid var(--border-gold);
+      padding: 12px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+    }
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-title-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header-title {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      line-height: 1.2;
+      color: var(--gold-primary);
+    }
+    .header-sub {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gold-hover);
+      letter-spacing: 1px;
+    }
+
+    /* KONTAINER UTAMA */
+    main {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 14px;
+    }
+
+    /* FOOTER RESMI */
+    footer {
+      background-color: #08100a;
+      border-top: 1px solid var(--border-dark);
+      padding: 12px 16px;
+      text-align: center;
+      margin-top: auto;
+    }
+    .footer-text {
+      font-size: 11px;
+      color: var(--gold-primary);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* KARTU */
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .card-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-dark);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gold-primary);
+    }
+
+    /* TOMBOL */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .btn-sm { padding: 5px 10px; font-size: 11px; }
+    .btn-gold {
+      background: linear-gradient(180deg, #f5c542 0%, #c29b38 100%);
+      color: #0b140c;
+    }
+    .btn-gold:hover { filter: brightness(1.1); }
+    .btn-dark {
+      background-color: #1b2f21;
+      color: var(--text-main);
+      border: 1px solid var(--border-dark);
+    }
+    .btn-dark:hover { background-color: #26432f; }
+    .btn-success { background-color: #15803d; color: #fff; }
+    .btn-danger { background-color: #b91c1c; color: #fff; }
+    .btn-info { background-color: #0284c7; color: #fff; }
+
+    /* FORM */
+    .form-group { margin-bottom: 12px; }
+    .form-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gold-primary);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+    .form-control {
+      width: 100%;
+      padding: 8px 10px;
+      background-color: #080f0a;
+      border: 1px solid var(--border-dark);
+      border-radius: 6px;
+      color: var(--text-main);
+      font-size: 12px;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 0 2px rgba(245,197,66,0.2);
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 10px;
+    }
+
+    /* BADGE */
+    .badge {
+      display: inline-block;
+      padding: 3px 7px;
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .badge-gold { background: rgba(245,197,66,0.15); color: var(--gold-primary); border: 1px solid var(--border-gold); }
+    .badge-success { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid #16a34a; }
+    .badge-danger { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid #dc2626; }
+    .badge-blue { background: rgba(56,189,248,0.15); color: #7dd3fc; border: 1px solid #0284c7; }
+
+    /* TABEL RESPONSIVE */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border-dark);
+      border-radius: 6px;
+      margin-top: 10px;
+      background-color: #09120b;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    th {
+      background-color: #122116;
+      color: var(--gold-primary);
+      padding: 8px 10px;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border-dark);
+      border-right: 1px solid #1a2f1f;
+    }
+    td {
+      padding: 7px 10px;
+      border-bottom: 1px solid #142417;
+      border-right: 1px solid #142417;
+      color: #e2e8f0;
+      vertical-align: middle;
+    }
+    tr:hover td { background-color: #112214; }
+
+    /* NAVIGASI TAB */
+    .nav-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .tab-btn {
+      background-color: #0d1810;
+      color: var(--text-muted);
+      border: 1px solid var(--border-dark);
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    .tab-btn.active {
+      background: linear-gradient(180deg, #1b3520 0%, #0e1e12 100%);
+      color: var(--gold-primary);
+      border-color: var(--border-gold);
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      backdrop-filter: blur(4px);
+    }
+    .modal-box {
+      background-color: #0d1710;
+      border: 1px solid var(--border-gold);
+      border-radius: 10px;
+      width: 100%;
+      max-width: 550px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
+    }
+    .modal-head {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-dark);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #112015;
+    }
+    .modal-body {
+      padding: 16px;
+      flex: 1;
+      overflow-y: auto;
+    }
+    .modal-footer {
+      padding: 10px 16px;
+      border-top: 1px solid var(--border-dark);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      background: #09130c;
+    }
+
+    /* STATISTIK */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .stat-card {
+      background-color: #0c160e;
+      border: 1px solid var(--border-dark);
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+    }
+    .stat-val {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--gold-primary);
+    }
+    .stat-lbl {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* TOAST */
+    #toast-msg {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1c2b1e;
+      color: var(--gold-primary);
+      border: 1px solid var(--border-gold);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      z-index: 2000;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.7);
+      text-align: center;
+      max-width: 90vw;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER APLIKASI -->
+  <header>
+    <div class="header-container">
+      <div class="header-title-box">
+        <svg class="icon-md text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+        <div>
+          <h1 class="header-title">SECABA RINDAM III/SILIWANGI</h1>
+          <p class="header-sub">VYATA ON</p>
+        </div>
+      </div>
+      <div id="auth-user-bar" class="hidden" style="display:flex; align-items:center; gap:8px;">
+        <span id="user-badge" class="badge badge-gold">ADMIN</span>
+        <button id="btn-logout" class="btn btn-dark btn-sm">Keluar</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- KONTEN UTAMA -->
+  <main>
+    <!-- TOAST NOTIFIKASI -->
+    <div id="toast-msg" class="hidden">Notifikasi</div>
+
+    <!-- 1. PANEL LOGIN -->
+    <div id="panel-auth" class="card" style="max-width: 420px; margin: 30px auto;">
+      <div class="card-title" style="justify-content:center; text-align:center;">
+        <span>AUTENTIKASI SISTEM</span>
+      </div>
+      <p class="text-xs text-muted" style="text-align:center; margin-bottom:14px;">
+        Akses hanya untuk Super Admin dan akun Admin yang dibuat oleh Super Admin. Login siswa dinonaktifkan. Akun tersimpan lokal di perangkat ini; untuk data resmi tetap diperlukan autentikasi server.
+      </p>
+
+      <form id="form-login" onsubmit="event.preventDefault(); handleLogin();">
+        <div class="form-group">
+          <label class="form-label">ID Admin</label>
+          <input type="text" id="login-id" class="form-control" placeholder="Contoh: SUPERADMIN atau ADMIN1" autocomplete="username" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kata Sandi</label>
+          <input type="password" id="login-pwd" class="form-control" placeholder="Kata sandi admin..." autocomplete="current-password" required>
+        </div>
+        <button type="submit" class="btn btn-gold" style="width:100%; margin-top:8px;">MASUK KE SISTEM</button>
+        <button type="button" id="btn-show-register" class="btn btn-outline btn-sm" style="width:100%; margin-top:10px;">
+          DAFTAR SEBAGAI ADMIN
+        </button>
+        <p id="auth-setup-hint" class="text-xs text-muted" style="margin-top:10px; text-align:center;">
+          Akun admin baru hanya aktif setelah disetujui Super Admin.
+        </p>
+      </form>
+      <div style="text-align:center; margin-top:16px; padding-top:10px; border-top:1px solid var(--border-dark);">
+        <span class="text-xs text-gold">@copyright StafOpsJar 2026</span>
+      </div>
+    </div>
+
+    <div id="panel-admin-register" class="card hidden" style="max-width:420px; margin:18px auto;">
+      <div class="card-title"><span>PENDAFTARAN ADMIN</span></div>
+      <p class="text-xs text-muted">Permohonan akun admin harus disetujui Super Admin sebelum dapat digunakan untuk login.</p>
+      <form id="form-admin-register">
+        <div class="form-group">
+          <label class="form-label">ID Admin yang diminta</label>
+          <input id="register-admin-id" class="form-control" placeholder="ADMIN1" required maxlength="30">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nama lengkap</label>
+          <input id="register-admin-name" class="form-control" placeholder="Nama pendaftar" required maxlength="80">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kata sandi (minimal 8 karakter)</label>
+          <input id="register-admin-pwd" type="password" class="form-control" required minlength="8" autocomplete="new-password">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ulangi kata sandi</label>
+          <input id="register-admin-pwd2" type="password" class="form-control" required minlength="8" autocomplete="new-password">
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button type="submit" class="btn btn-gold">KIRIM PERMOHONAN</button>
+          <button type="button" id="btn-register-cancel" class="btn btn-outline">KEMBALI LOGIN</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="panel-first-setup" class="card hidden" style="max-width:420px; margin:18px auto;">
+      <div class="card-title"><span>BUAT SUPER ADMIN PERTAMA</span></div>
+      <p class="text-xs text-muted">Buat kredensial awal. Simpan kata sandi dengan aman. Akun ini dikelola pada perangkat/browser ini.</p>
+      <form id="form-first-setup">
+        <div class="form-group">
+          <label class="form-label">ID Super Admin</label>
+          <input id="setup-admin-id" class="form-control" value="SUPERADMIN" required minlength="4" maxlength="30" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nama Super Admin</label>
+          <input id="setup-admin-name" class="form-control" placeholder="Nama pengelola" required maxlength="80">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kata Sandi (minimal 8 karakter)</label>
+          <input id="setup-admin-pwd" type="password" class="form-control" required minlength="8" autocomplete="new-password">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ulangi Kata Sandi</label>
+          <input id="setup-admin-pwd2" type="password" class="form-control" required minlength="8" autocomplete="new-password">
+        </div>
+        <button type="submit" class="btn btn-gold" style="width:100%">BUAT SUPER ADMIN</button>
+      </form>
+    </div>
+
+    <div id="admin-management-toggle-wrap" class="hidden" style="margin:14px 0; text-align:right;">
+      <button type="button" id="btn-toggle-admin-management" class="btn btn-outline btn-sm" aria-expanded="false">
+        Tampilkan Manajemen Akun
+      </button>
+    </div>
+    <div id="panel-admin-management" class="card hidden" style="margin:18px 0;">
+      <div class="card-title"><span>MANAJEMEN AKUN ADMIN</span></div>
+      <p class="text-xs text-muted">Khusus Super Admin. Buat akun ADMIN1, ADMIN2, dan seterusnya. Admin biasa tidak dapat membuat atau menghapus akun admin.</p>
+      <form id="form-create-admin" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; align-items:end;">
+        <div class="form-group">
+          <label class="form-label">ID Admin</label>
+          <input id="new-admin-id" class="form-control" placeholder="ADMIN1" required maxlength="30">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nama Admin</label>
+          <input id="new-admin-name" class="form-control" placeholder="Nama admin" required maxlength="80">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kata Sandi (min. 8 karakter)</label>
+          <input id="new-admin-pwd" type="password" class="form-control" required minlength="8" autocomplete="new-password">
+        </div>
+        <button type="submit" class="btn btn-gold">TAMBAH ADMIN</button>
+      </form>
+      <div style="overflow-x:auto; margin-top:14px;">
+        <table><thead><tr><th>ID</th><th>Nama</th><th>Peran</th><th>Aksi</th></tr></thead><tbody id="admin-accounts-body"></tbody></table>
+      </div>
+      <div class="card-title" style="margin-top:20px;"><span>PERMOHONAN ADMIN MENUNGGU PERSETUJUAN</span></div>
+      <div style="overflow-x:auto;">
+        <table><thead><tr><th>ID diminta</th><th>Nama</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="admin-requests-body"></tbody></table>
+      </div>
+    </div>
+
+    <!-- 2. DASBOR UTAMA (SETELAH LOGIN) -->
+    <div id="panel-dashboard" class="hidden">
+      <!-- TAB NAVIGASI -->
+      <div class="nav-tabs">
+        <button class="tab-btn active" data-tab="tab-siswa">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Data Siswa
+        </button>
+        <button class="tab-btn" data-tab="tab-laporan">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          Input Laporan
+        </button>
+        <button class="tab-btn" data-tab="tab-running-text">📡 Running Text Jadwal</button>
+        <button class="tab-btn" data-tab="tab-rekap">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+          Rekap Mingguan & PDF
+        </button>
+      </div>
+
+      <!-- TAB 1: DATA SISWA -->
+      <section id="tab-siswa">
+        <div class="card">
+          <div class="card-title" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <svg class="icon-sm text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              <span>DATA NOMINATIF SISWA</span>
+            </div>
+            <!-- DERETAN TOMBOL SEJAJAR RAPI -->
+            <div style="display:flex; align-items:center; gap:6px; flex-wrap:nowrap; overflow-x:auto;">
+              <button id="btn-tambah-siswa" class="btn btn-gold btn-sm admin-only" style="white-space:nowrap;">➕ Tambah Siswa</button>
+              <label class="btn btn-success btn-sm admin-only" style="white-space:nowrap; margin-bottom:0; cursor:pointer;">
+                📥 Impor Excel
+                <input type="file" id="file-import-excel" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleImportExcel(this)">
+              </label>
+              <button id="btn-template-excel" class="btn btn-dark btn-sm admin-only" style="white-space:nowrap;" onclick="downloadTemplateExcel()">📑 Format Excel</button>
+              <button id="btn-export-siswa-excel" class="btn btn-success btn-sm" style="white-space:nowrap;">📊 Ekspor Excel</button>
+              <button id="btn-export-siswa-csv" class="btn btn-dark btn-sm" style="white-space:nowrap;">📥 Unduh CSV</button>
+              <button id="btn-print-siswa-pdf" class="btn btn-info btn-sm" style="white-space:nowrap;">📄 Cetak / PDF</button>
+            </div>
+          </div>
+
+          <!-- PENCARIAN 1 KOLOM TUNGGAL (NAMA / NOSIS) -->
+          <div style="margin-bottom:12px;">
+            <label class="form-label">Cari Data Siswa (Nama / NOSIS)</label>
+            <input type="text" id="filter-siswa-cari" class="form-control" placeholder="Ketik nama atau nomor siswa (NOSIS)...">
+          </div>
+
+          <!-- TABEL DATA SISWA -->
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>NOSIS</th>
+                  <th>Nama Lengkap</th>
+                  <th>Pangkat</th>
+                  <th>Kompi</th>
+                  <th>Kelas</th>
+                  <th>Pleton</th>
+                  <th>Suku</th>
+                  <th>TTL</th>
+                  <th>Agama</th>
+                  <th>Gol. Darah</th>
+                  <th>Pendidikan Umum</th>
+                  <th>Tahun Lulus</th>
+                  <th>Alamat</th>
+                  <th>Detail</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="table-body-siswa">
+                <!-- Diisi via JS -->
+              </tbody>
+            </table>
+          </div>
+          <div id="siswa-empty-msg" class="text-xs text-muted hidden" style="text-align:center; padding:12px;">
+            Tidak ada data siswa yang cocok dengan filter pencarian.
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: INPUT LAPORAN -->
+      <section id="tab-laporan" class="hidden">
+        <div class="card" style="max-width:680px; margin:0 auto;">
+          <div class="card-title">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <svg class="icon-sm text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              <span>FORMULIR LAPORAN SISWA</span>
+            </div>
+            <span class="badge badge-success">OTOMATIS DISETUJUI</span>
+          </div>
+
+          <form id="form-laporan" onsubmit="event.preventDefault(); simpanLaporanBaru();">
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label">Ketik Nomor Siswa (NOSIS)</label>
+                <input type="text" id="lap-input-nosis" class="form-control" placeholder="Ketik NOSIS (otomatis terpilih)..." autocomplete="off">
+                <div id="lap-siswa-matched-hint" class="text-xs text-muted" style="margin-top:4px;">Ketik nomor siswa untuk memilih otomatis</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Pilih Siswa</label>
+                <select id="lap-nosis" class="form-control" required>
+                  <!-- Diisi via JS -->
+                </select>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label">Jenis Laporan</label>
+                <select id="lap-jenis" class="form-control" required>
+                  <option value="SAKIT">KESEHATAN (SAKIT / BEROBAT)</option>
+                  <option value="PRESTASI">PRESTASI (PENGHARGAAN)</option>
+                  <option value="PELANGGARAN">PELANGGARAN (DISIPLIN / TATA TERTIB)</option>
+                  <option value="PRESTASI_PELANGGARAN">PRESTASI & PELANGGARAN</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tanggal Kejadian / Pemeriksaan</label>
+                <input type="date" id="lap-tanggal" class="form-control" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" id="lbl-lap-diagnosa">Diagnosa / Keterangan Sakit</label>
+              <input type="text" id="lap-diagnosa" class="form-control" placeholder="Contoh: ISPA / Demam tinggi" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" id="lbl-lap-tindakan">Tindakan / Pengobatan / Tindak Lanjut</label>
+              <input type="text" id="lap-tindakan" class="form-control" placeholder="Contoh: Istirahat di Barak Tonkes" required>
+            </div>
+
+            <!-- LAMPIRAN BUKTI FOTO -->
+            <div class="form-group" style="background:#09120a; border:1px dashed var(--border-gold); padding:10px; border-radius:8px;">
+              <label class="form-label">Bukti Foto Dokumen (Opsional / Terlampir di PDF)</label>
+              <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+                <label class="btn btn-dark btn-sm" style="cursor:pointer;">
+                  🖼️ Pilih Gambar
+                  <input type="file" id="lap-file-input" accept="image/*" class="hidden" onchange="handleFotoInput(this)">
+                </label>
+                <label class="btn btn-dark btn-sm" style="cursor:pointer;">
+                  📷 Kamera Langsung
+                  <input type="file" id="lap-camera-input" accept="image/*" capture="environment" class="hidden" onchange="handleFotoInput(this)">
+                </label>
+                <span id="lap-foto-nama" class="text-xs text-muted">Belum ada gambar atau foto kamera</span>
+              </div>
+              <div id="lap-foto-preview-box" class="hidden" style="margin-top:8px;">
+                <img id="lap-foto-preview-img" src="" alt="Pratinjau Foto" style="max-height:120px; border-radius:6px; border:1px solid var(--border-gold);">
+                <button type="button" class="btn btn-danger btn-sm" style="display:block; margin-top:4px;" onclick="hapusFotoLaporan()">Hapus Foto</button>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-gold" style="width:100%; margin-top:10px;">
+              KIRIM LAPORAN SEKARANG
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- TAB 3: REKAPITULASI MINGGUAN & PDF -->
+      <section id="tab-rekap" class="hidden">
+        <div class="card">
+          <div class="card-title">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <svg class="icon-sm text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+              </svg>
+              <span>REKAPITULASI MINGGUAN & VERIFIKASI LAPORAN</span>
+            </div>
+            <!-- DERETAN TOMBOL AKSI UTAMA -->
+            <div style="display:flex; flex-wrap:wrap; gap:6px;">
+              <button id="btn-download-rekap-pdf" class="btn btn-gold btn-sm">📄 Unduh PDF</button>
+              <button id="btn-share-wa-pdf" class="btn btn-success btn-sm">💬 Kirim PDF ke WA</button>
+              <button id="btn-share-telegram-pdf" class="btn btn-info btn-sm">✈️ Kirim PDF Telegram</button>
+            </div>
+          </div>
+
+          <!-- FILTER PERIODE REKAP -->
+          <div class="grid-4" style="margin-bottom:12px;">
+            <div>
+              <label class="form-label">Pilihan Periode</label>
+              <select id="rekap-filter-preset" class="form-control" onchange="handlePresetPeriode(this.value)">
+                <option value="minggu-ini">Minggu Ini</option>
+                <option value="minggu-lalu">Minggu Lalu</option>
+                <option value="bulan-ini">Bulan Ini</option>
+                <option value="semua">Semua Periode</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Tanggal Mulai</label>
+              <input type="date" id="rekap-date-start" class="form-control">
+            </div>
+            <div>
+              <label class="form-label">Tanggal Akhir</label>
+              <input type="date" id="rekap-date-end" class="form-control">
+            </div>
+            <div>
+              <label class="form-label">Jenis Laporan</label>
+              <select id="rekap-filter-jenis" class="form-control">
+                <option value="SAKIT" selected>Kesehatan (Sakit)</option>
+                <option value="PRESTASI">Prestasi</option>
+                <option value="PELANGGARAN">Pelanggaran</option>
+                <option value="PRESTASI_PELANGGARAN">Prestasi & Pelanggaran</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- KARTU STATISTIK MINGGUAN -->
+          <div class="stat-grid">
+            <div class="stat-card">
+              <div id="stat-total-laporan" class="stat-val">0</div>
+              <div class="stat-lbl">Total Laporan Terpilih</div>
+            </div>
+            <div class="stat-card">
+              <div id="stat-total-sakit" class="stat-val text-danger">0</div>
+              <div class="stat-lbl">Siswa Sakit</div>
+            </div>
+            <div class="stat-card">
+              <div id="stat-total-prestasi" class="stat-val text-success">0</div>
+              <div class="stat-lbl">Prestasi</div>
+            </div>
+            <div class="stat-card">
+              <div id="stat-total-pelanggaran" class="stat-val" style="color: #fb923c;">0</div>
+              <div class="stat-lbl">Pelanggaran</div>
+            </div>
+          </div>
+
+          <!-- TABEL REKAPITULASI -->
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Tanggal</th>
+                  <th>NOSIS</th>
+                  <th>Nama Siswa</th>
+                  <th>Pelapor</th>
+                  <th>Kompi / Ton</th>
+                  <th>Jenis</th>
+                  <th>Uraian / Diagnosa</th>
+                  <th>Tindakan / Sanksi / Penghargaan</th>
+                  <th>Foto Bukti</th>
+                  <th>Status</th>
+                  <th class="admin-only">Aksi Admin</th>
+                </tr>
+              </thead>
+              <tbody id="table-body-rekap">
+                <!-- Diisi via JS -->
+              </tbody>
+            </table>
+          </div>
+          <div id="rekap-empty-msg" class="text-xs text-muted" style="text-align:center; padding:12px;">
+            Tidak ada riwayat laporan pada kategori dan periode ini.
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: RUNNING TEXT JADWAL PENDIDIKAN -->
+      <section id="tab-running-text" class="hidden">
+        <style>
+          #tab-running-text .rt-card{background:#0b1220;border:1px solid #334155;border-radius:12px;padding:14px;margin:12px 0;color:#e2e8f0}
+          #tab-running-text .rt-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+          #tab-running-text .rt-clock{background:#020617;border:1px solid #475569;border-radius:9px;padding:8px 12px;text-align:center}
+          #tab-running-text .rt-clock strong{display:block;color:#facc15;font:800 25px ui-monospace,monospace}
+          #tab-running-text .rt-led{background:#020403;border:3px solid #334155;border-radius:12px;padding:12px;overflow:hidden}
+          #tab-running-text .rt-window{overflow:hidden;background:#000;border-radius:8px;padding:14px 0}
+          #tab-running-text .rt-track{display:flex;width:max-content;white-space:nowrap;animation:rtmove 28s linear infinite;color:#facc15;font-weight:900;font-size:clamp(22px,4vw,38px);text-shadow:0 0 10px #facc1588}
+          #tab-running-text .rt-track span{padding-right:70px}
+          #tab-running-text .rt-window:hover .rt-track{animation-play-state:paused}
+          @keyframes rtmove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+          #tab-running-text .rt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:12px}
+          #tab-running-text .rt-field label{display:block;font-size:12px;margin:7px 0 4px;color:#cbd5e1}
+          #tab-running-text .rt-field input{width:100%;background:#020617;color:#fff;border:1px solid #475569;border-radius:6px;padding:9px}
+          #tab-running-text .rt-actions{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}
+          #tab-running-text .rt-table{overflow:auto}#tab-running-text table{min-width:720px}
+          #tab-running-text .rt-small{font-size:12px;color:#94a3b8}
+        </style>
+        <div class="rt-card rt-head"><div><div class="card-title">📡 RUNNING TEXT DISPLAY JADWAL PENDIDIKAN</div><div class="rt-small">Fitur terintegrasi di VYATA ON · jadwal disimpan pada perangkat ini</div></div><div class="rt-clock"><span id="rt-date" class="rt-small">Tanggal</span><strong id="rt-time">00:00:00</strong><span class="rt-small">WIB</span></div></div>
+        <div class="rt-card rt-led"><div class="rt-head" style="margin-bottom:10px"><b id="rt-status" style="color:#34d399">● MEMUAT JADWAL</b><span id="rt-mode" class="rt-small"></span></div><div class="rt-window"><div id="rt-track" class="rt-track"><span>Memuat jadwal pendidikan…</span><span>Memuat jadwal pendidikan…</span></div></div><div id="rt-summary" class="rt-small" style="margin-top:9px"></div></div>
+        <div class="rt-grid">
+          <div class="rt-card"><div class="card-title">SESI SAAT INI</div><div id="rt-current" class="rt-small">Memeriksa jadwal…</div></div>
+          <div class="rt-card"><div class="card-title">SESI BERIKUTNYA</div><div id="rt-next" class="rt-small">Memeriksa jadwal…</div></div>
+          <div class="rt-card"><div class="card-title">SIMULATOR WAKTU</div><div class="rt-field"><label for="rt-sim-date">Tanggal</label><input type="date" id="rt-sim-date"><label for="rt-sim-time">Jam</label><input type="time" id="rt-sim-time" step="1"></div><div class="rt-actions"><button type="button" class="btn btn-gold btn-sm" id="rt-apply-sim">▶ Terapkan</button><button type="button" class="btn btn-dark btn-sm" id="rt-reset-sim">↻ Real-time</button></div></div>
+        </div>
+        <div class="rt-card"><div class="card-title">MASTER JADWAL</div><div class="rt-small">Kolom CSV/Excel: Hari, Tanggal, Jam Ke, Mulai, Selesai, Mata Pelajaran, Ke, Dari, Pengajar. Data jadwal contoh bukan jadwal resmi lengkap; impor data yang sudah diverifikasi.</div><div class="rt-actions"><label class="btn btn-success btn-sm" style="cursor:pointer">📥 Impor Excel/CSV<input id="rt-file" type="file" accept=".csv,.xlsx,.xls" class="hidden"></label><button type="button" class="btn btn-dark btn-sm" id="rt-template">⬇ Templat CSV</button><button type="button" class="btn btn-dark btn-sm" id="rt-export">⬇ Ekspor CSV</button><button type="button" class="btn btn-info btn-sm" id="rt-image-btn">🖼 Lihat gambar tabel</button><input id="rt-image" type="file" accept="image/*" class="hidden"><button type="button" class="btn btn-dark btn-sm" id="rt-reset">↻ Pulihkan contoh</button></div><div id="rt-message" class="rt-small" role="status" style="margin:8px 0"></div><div id="rt-image-preview" class="hidden"><img id="rt-image-view" alt="Gambar jadwal" style="max-width:100%;max-height:420px;display:block;margin:10px auto"><button type="button" class="btn btn-dark btn-sm" id="rt-image-remove">Hapus gambar</button></div><div class="rt-table"><table><thead><tr><th>Hari/Tanggal</th><th>Jam Ke</th><th>Waktu</th><th>Mata Pelajaran</th><th>Ke</th><th>Dari</th><th>Pengajar</th></tr></thead><tbody id="rt-body"></tbody></table></div></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- FOOTER RESMI DENGAN COPYRIGHT -->
+  <footer>
+    <p class="footer-text">@copyright StafOpsJar 2026</p>
+  </footer>
+
+  <!-- MODAL: DETAIL SISWA -->
+  <div id="modal-detail-siswa" class="modal-overlay hidden">
+    <div class="modal-box" style="max-width: 580px;">
+      <div class="modal-head">
+        <span class="font-bold text-gold text-sm">PROFIL & RINCIAN DETAIL SISWA</span>
+        <button class="btn btn-dark btn-sm btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body" id="detail-siswa-content">
+        <!-- Diisi dinamis oleh JS -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-dark btn-sm btn-close-modal">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: LIHAT BUKTI FOTO PENUH -->
+  <div id="modal-view-photo" class="modal-overlay hidden">
+    <div class="modal-box" style="max-width: 440px; text-align: center;">
+      <div class="modal-head">
+        <span class="font-bold text-gold text-sm">BUKTI FOTO DOKUMEN</span>
+        <button class="btn btn-dark btn-sm btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <img id="full-photo-img" src="" style="max-width:100%; max-height:65vh; border-radius:8px; border:1px solid var(--border-gold);" alt="Bukti Foto">
+      </div>
+      <div class="modal-footer" style="justify-content:center;">
+        <button type="button" class="btn btn-dark btn-sm btn-close-modal">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: TAMBAH SISWA -->
+  <div id="modal-form-siswa" class="modal-overlay hidden">
+    <div class="modal-box" style="max-width: 620px;">
+      <div class="modal-head">
+        <span class="font-bold text-gold text-sm">TAMBAH DATA SISWA BARU</span>
+        <button class="btn btn-dark btn-sm btn-close-modal">✕</button>
+      </div>
+      <form id="form-tambah-siswa" onsubmit="event.preventDefault(); simpanSiswaBaru();">
+        <div class="modal-body">
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Nomor Siswa (NOSIS)</label>
+              <input type="text" id="add-nosis" class="form-control" placeholder="Contoh: 2024005" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nama Lengkap</label>
+              <input type="text" id="add-nama" class="form-control" placeholder="Nama siswa..." required>
+            </div>
+          </div>
+
+          <div class="grid-3">
+            <div class="form-group">
+              <label class="form-label">Kompi (Angka Saja)</label>
+              <select id="add-kompi" class="form-control" required>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Kelas (A1 - H4)</label>
+              <select id="add-kelas" class="form-control" required>
+                <optgroup label="Kelas Seri 1">
+                  <option value="A1">A1</option>
+                  <option value="B1">B1</option>
+                  <option value="C1">C1</option>
+                  <option value="D1">D1</option>
+                  <option value="E1">E1</option>
+                  <option value="F1">F1</option>
+                  <option value="G1">G1</option>
+                  <option value="H1">H1</option>
+                </optgroup>
+                <optgroup label="Kelas Seri 2">
+                  <option value="A2">A2</option>
+                  <option value="B2">B2</option>
+                  <option value="C2">C2</option>
+                  <option value="D2">D2</option>
+                  <option value="E2">E2</option>
+                  <option value="F2">F2</option>
+                  <option value="G2">G2</option>
+                  <option value="H2">H2</option>
+                </optgroup>
+                <optgroup label="Kelas Seri 3">
+                  <option value="A3">A3</option>
+                  <option value="B3">B3</option>
+                  <option value="C3">C3</option>
+                  <option value="D3">D3</option>
+                  <option value="E3">E3</option>
+                  <option value="F3">F3</option>
+                  <option value="G3">G3</option>
+                  <option value="H3">H3</option>
+                </optgroup>
+                <optgroup label="Kelas Seri 4">
+                  <option value="A4">A4</option>
+                  <option value="B4">B4</option>
+                  <option value="C4">C4</option>
+                  <option value="D4">D4</option>
+                  <option value="E4">E4</option>
+                  <option value="F4">F4</option>
+                  <option value="G4">G4</option>
+                  <option value="H4">H4</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Pleton (Angka Saja)</label>
+              <select id="add-pleton" class="form-control" required>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Pangkat</label>
+              <input type="text" id="add-pangkat" class="form-control" value="Siswa" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Suku</label>
+              <input type="text" id="add-suku" class="form-control" placeholder="Sunda / Jawa / Batak...">
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Tempat, Tanggal Lahir (TTL)</label>
+              <input type="text" id="add-ttl" class="form-control" placeholder="Bandung, 12-05-2003">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Agama</label>
+              <select id="add-agama" class="form-control">
+                <option value="Islam">Islam</option>
+                <option value="Kristen Protestan">Kristen Protestan</option>
+                <option value="Katolik">Katolik</option>
+                <option value="Hindu">Hindu</option>
+                <option value="Buddha">Buddha</option>
+                <option value="Khonghucu">Khonghucu</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid-3">
+            <div class="form-group">
+              <label class="form-label">Golongan Darah</label>
+              <select id="add-goldarah" class="form-control">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="AB">AB</option>
+                <option value="O">O</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Pendidikan Umum</label>
+              <input type="text" id="add-pendidikan" class="form-control" placeholder="SMA / SMK / S1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tahun Lulus</label>
+              <input type="text" id="add-thnlulus" class="form-control" placeholder="2022">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Alamat Domisili</label>
+            <input type="text" id="add-alamat" class="form-control" placeholder="Alamat lengkap siswa...">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Status Siswa</label>
+            <select id="add-status" class="form-control">
+              <option value="Aktif">Aktif</option>
+              <option value="Sakit">Sakit</option>
+              <option value="Pesiar">Pesiar</option>
+              <option value="IB">Izin Bermalam (IB)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-dark btn-sm btn-close-modal">Batal</button>
+          <button type="submit" class="btn btn-gold btn-sm">Simpan Siswa</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT APLIKASI -->
+  <script>
+  (function() {
+    'use strict';
+
+    const STORAGE_KEY_SISWA = 'secaba_rindam_siswa_v5';
+    const STORAGE_KEY_LAPORAN = 'secaba_rindam_laporan_v5';
+    const STORAGE_KEY_AUTH = 'secaba_rindam_auth_v5';
+
+    // Helpers: tanggal lokal, escaping teks, dan penyimpanan yang tahan kuota.
+    function getLocalDateISO(date = new Date()) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+    function escapeHTML(value) {
+      return String(value ?? '').replace(/[&<>"']/g, ch => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[ch]));
+    }
+    function saveLocal(key, value) {
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+        return true;
+      } catch (err) {
+        console.error('Penyimpanan gagal:', err);
+        showToast('Penyimpanan gagal/ruang penuh. Ekspor cadangan data lalu kurangi ukuran foto.');
+        return false;
+      }
+    }
+
+
+    const DEFAULT_SISWA = [
+      {
+        nosis: '2024001',
+        nama: 'Ahmad Fauzi',
+        pangkat: 'Siswa',
+        kompi: '1',
+        kelas: 'A1',
+        pleton: '1',
+        suku: 'Sunda',
+        ttl: 'Bandung, 10-02-2003',
+        agama: 'Islam',
+        golDarah: 'O',
+        pendidikanUmum: 'SMA',
+        tahunLulus: '2021',
+        alamat: 'Jl. Riau No. 12, Bandung',
+        status: 'Aktif'
+      },
+      {
+        nosis: '2024002',
+        nama: 'Budi Santoso',
+        pangkat: 'Siswa',
+        kompi: '1',
+        kelas: 'B1',
+        pleton: '2',
+        suku: 'Jawa',
+        ttl: 'Semarang, 14-07-2002',
+        agama: 'Islam',
+        golDarah: 'A',
+        pendidikanUmum: 'SMK',
+        tahunLulus: '2020',
+        alamat: 'Jl. Pemuda No. 45, Semarang',
+        status: 'Aktif'
+      },
+      {
+        nosis: '2024003',
+        nama: 'Candra Wijaya',
+        pangkat: 'Siswa',
+        kompi: '2',
+        kelas: 'C2',
+        pleton: '1',
+        suku: 'Batak',
+        ttl: 'Medan, 05-09-2003',
+        agama: 'Kristen Protestan',
+        golDarah: 'B',
+        pendidikanUmum: 'SMA',
+        tahunLulus: '2021',
+        alamat: 'Jl. Gatot Subroto No. 88, Medan',
+        status: 'Aktif'
+      }
+    ];
+
+    const DEFAULT_LAPORAN = [
+      {
+        id: 'LAP-101',
+        tanggal: new Date(Date.now() - 2 * 86400000).getFullYear() + '-' + String(new Date(Date.now() - 2 * 86400000).getMonth()+1).padStart(2,'0') + '-' + String(new Date(Date.now() - 2 * 86400000).getDate()).padStart(2,'0'),
+        nosis: '2024001',
+        nama: 'Ahmad Fauzi',
+        kompi: '1',
+        kelas: 'A1',
+        pleton: '1',
+        jenis: 'SAKIT',
+        diagnosa: 'Demam & Flu Berat',
+        tindakan: 'Istirahat di Barak Tonkes',
+        foto: '',
+        status: 'DISETUJUI'
+      },
+      {
+        id: 'LAP-102',
+        tanggal: new Date(Date.now() - 1 * 86400000).getFullYear() + '-' + String(new Date(Date.now() - 1 * 86400000).getMonth()+1).padStart(2,'0') + '-' + String(new Date(Date.now() - 1 * 86400000).getDate()).padStart(2,'0'),
+        nosis: '2024003',
+        nama: 'Candra Wijaya',
+        kompi: '2',
+        kelas: 'C2',
+        pleton: '1',
+        jenis: 'PRESTASI',
+        diagnosa: 'Juara 1 Lomba Tembak Presisi',
+        tindakan: 'Pemberian Piagam Penghargaan Dansecaba',
+        foto: '',
+        status: 'DISETUJUI'
+      },
+      {
+        id: 'LAP-103',
+        tanggal: getLocalDateISO(),
+        nosis: '2024002',
+        nama: 'Budi Santoso',
+        kompi: '1',
+        kelas: 'B1',
+        pleton: '2',
+        jenis: 'PELANGGARAN',
+        diagnosa: 'Terlambat Apel Malam 10 Menit',
+        tindakan: 'Tindakan Disiplin Push Up 25 Kali & Teguran Lisan',
+        foto: '',
+        status: 'DISETUJUI'
+      }
+    ];
+
+    let appSiswa = [];
+    let appLaporan = [];
+    let currentUser = null;
+    let tempLaporanFoto = '';
+
+    function initApp() {
+      try {
+        const rawSiswa = localStorage.getItem(STORAGE_KEY_SISWA);
+        appSiswa = rawSiswa ? JSON.parse(rawSiswa) : DEFAULT_SISWA;
+      } catch (e) {
+        appSiswa = DEFAULT_SISWA;
+      }
+
+      try {
+        const rawLaporan = localStorage.getItem(STORAGE_KEY_LAPORAN);
+        appLaporan = rawLaporan ? JSON.parse(rawLaporan) : DEFAULT_LAPORAN;
+      } catch (e) {
+        appLaporan = DEFAULT_LAPORAN;
+      }
+
+      try {
+        const rawAuth = localStorage.getItem(STORAGE_KEY_AUTH);
+        if (rawAuth) {
+          currentUser = JSON.parse(rawAuth);
+        }
+      } catch (e) {
+        currentUser = null;
+      }
+
+      setupEventListeners();
+      checkSession();
+      populateDropdownSiswa();
+      handlePresetPeriode('minggu-ini');
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById('toast-msg');
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.remove('hidden');
+      clearTimeout(el.timer);
+      el.timer = setTimeout(() => el.classList.add('hidden'), 2800);
+    }
+
+    function checkSession() {
+      const panelAuth = document.getElementById('panel-auth');
+      const panelDash = document.getElementById('panel-dashboard');
+      const userBar = document.getElementById('auth-user-bar');
+      const userBadge = document.getElementById('user-badge');
+
+      // Jangan percaya sesi lama dari versi sebelumnya; sesi harus cocok dengan akun admin yang tersimpan.
+      if (currentUser) {
+        const validSession = getAdminAccounts().some(a =>
+          String(a.id).toUpperCase() === String(currentUser.id || '').toUpperCase() &&
+          a.role === currentUser.role &&
+          (a.role === 'ADMIN' || a.role === 'SUPER_ADMIN')
+        );
+        if (!validSession) {
+          currentUser = null;
+          try { localStorage.removeItem(STORAGE_KEY_AUTH); } catch (e) {}
+        }
+      }
+
+      if (currentUser) {
+        panelAuth.classList.add('hidden');
+        panelDash.classList.remove('hidden');
+        userBar.classList.remove('hidden');
+        userBadge.textContent = currentUser.role === 'SUPER_ADMIN' ? `SUPER ADMIN: ${currentUser.id}` : `ADMIN: ${currentUser.id}`;
+
+        document.querySelectorAll('.admin-only').forEach(el => {
+          if (currentUser.role === 'ADMIN' || currentUser.role === 'SUPER_ADMIN') {
+            el.classList.remove('hidden');
+          } else {
+            el.classList.add('hidden');
+          }
+        });
+
+        const mgmt = document.getElementById('panel-admin-management');
+        const mgmtToggle = document.getElementById('admin-management-toggle-wrap');
+        if (mgmt) mgmt.classList.add('hidden');
+        if (mgmtToggle) mgmtToggle.classList.toggle('hidden', currentUser.role !== 'SUPER_ADMIN');
+        const mgmtButton = document.getElementById('btn-toggle-admin-management');
+        if (mgmtButton) {
+          mgmtButton.textContent = 'Tampilkan Manajemen Akun';
+          mgmtButton.setAttribute('aria-expanded', 'false');
+        }
+        renderAdminAccounts();
+        renderAdminRequests();
+        renderTabelSiswa();
+        renderTabelRekap();
+      } else {
+        panelAuth.classList.remove('hidden');
+        panelDash.classList.add('hidden');
+        userBar.classList.add('hidden');
+        const mgmt = document.getElementById('panel-admin-management');
+        const mgmtToggle = document.getElementById('admin-management-toggle-wrap');
+        if (mgmt) mgmt.classList.add('hidden');
+        if (mgmtToggle) mgmtToggle.classList.add('hidden');
+        const setup = document.getElementById('panel-first-setup');
+        const hasAccounts = getAdminAccounts().length > 0;
+        if (setup) setup.classList.toggle('hidden', hasAccounts);
+      }
+    }
+
+    const STORAGE_KEY_ADMINS = 'vyata_on_admin_accounts_v1';
+    function getAdminAccounts() {
+      try { const v = JSON.parse(localStorage.getItem(STORAGE_KEY_ADMINS) || '[]'); return Array.isArray(v) ? v : []; }
+      catch (e) { return []; }
+    }
+    function saveAdminAccounts(accounts) {
+      try { localStorage.setItem(STORAGE_KEY_ADMINS, JSON.stringify(accounts)); return true; }
+      catch (e) { showToast('Akun gagal disimpan. Penyimpanan perangkat mungkin penuh.'); return false; }
+    }
+    function renderAdminAccounts() {
+      const body = document.getElementById('admin-accounts-body');
+      if (!body) return;
+      const accounts = getAdminAccounts();
+      body.innerHTML = '';
+      accounts.forEach(a => {
+        const tr = document.createElement('tr');
+        const cells = [a.id, a.nama, a.role === 'SUPER_ADMIN' ? 'Super Admin' : 'Admin'];
+        cells.forEach(value => { const td = document.createElement('td'); td.textContent = value || ''; tr.appendChild(td); });
+        const action = document.createElement('td');
+        if (a.role !== 'SUPER_ADMIN' && currentUser && currentUser.role === 'SUPER_ADMIN') {
+          const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'btn btn-danger btn-sm'; btn.textContent = 'Hapus';
+          btn.onclick = () => {
+            if (!currentUser || currentUser.role !== 'SUPER_ADMIN') { showToast('Hanya Super Admin yang boleh mengelola akun.'); return; }
+            if (!confirm('Hapus akun ' + a.id + '?')) return;
+            saveAdminAccounts(getAdminAccounts().filter(x => x.id !== a.id)); renderAdminAccounts(); showToast('Akun admin dihapus.');
+          };
+          action.appendChild(btn);
+        } else { action.textContent = '—'; }
+        tr.appendChild(action); body.appendChild(tr);
+      });
+    }
+
+    const STORAGE_KEY_ADMIN_REQUESTS = 'vyata_on_admin_requests_v1';
+    function getAdminRequests() {
+      try { const v = JSON.parse(localStorage.getItem(STORAGE_KEY_ADMIN_REQUESTS) || '[]'); return Array.isArray(v) ? v : []; }
+      catch (e) { return []; }
+    }
+    function saveAdminRequests(requests) {
+      try { localStorage.setItem(STORAGE_KEY_ADMIN_REQUESTS, JSON.stringify(requests)); return true; }
+      catch (e) { showToast('Permohonan gagal disimpan. Penyimpanan perangkat mungkin penuh.'); return false; }
+    }
+    function renderAdminRequests() {
+      const body = document.getElementById('admin-requests-body');
+      if (!body) return;
+      body.innerHTML = '';
+      getAdminRequests().forEach(req => {
+        const tr = document.createElement('tr');
+        [req.id, req.nama, req.status || 'Menunggu'].forEach(value => {
+          const td = document.createElement('td'); td.textContent = value || ''; tr.appendChild(td);
+        });
+        const td = document.createElement('td');
+        if (req.status === 'Menunggu' && currentUser && currentUser.role === 'SUPER_ADMIN') {
+          const approve = document.createElement('button');
+          approve.type = 'button'; approve.className = 'btn btn-gold btn-sm'; approve.textContent = 'Setujui';
+          approve.onclick = () => {
+            if (!currentUser || currentUser.role !== 'SUPER_ADMIN') { showToast('Hanya Super Admin yang boleh menyetujui.'); return; }
+            const requests = getAdminRequests();
+            const item = requests.find(r => r.requestId === req.requestId);
+            if (!item || item.status !== 'Menunggu') return;
+            const accounts = getAdminAccounts();
+            if (accounts.some(a => a.id.toUpperCase() === item.id.toUpperCase())) { showToast('ID sudah digunakan. Tolak permohonan ini atau minta pendaftar memakai ID lain.'); return; }
+            accounts.push({ id: item.id, nama: item.nama, password: item.password, role: 'ADMIN' });
+            if (!saveAdminAccounts(accounts)) return;
+            item.status = 'Disetujui';
+            item.password = '';
+            if (!saveAdminRequests(requests)) return;
+            renderAdminAccounts(); renderAdminRequests();
+            showToast('Permohonan ' + item.id + ' disetujui.');
+          };
+          const reject = document.createElement('button');
+          reject.type = 'button'; reject.className = 'btn btn-danger btn-sm'; reject.style.marginLeft = '6px'; reject.textContent = 'Tolak';
+          reject.onclick = () => {
+            if (!currentUser || currentUser.role !== 'SUPER_ADMIN') { showToast('Hanya Super Admin yang boleh menolak.'); return; }
+            const requests = getAdminRequests();
+            const item = requests.find(r => r.requestId === req.requestId);
+            if (!item || item.status !== 'Menunggu') return;
+            item.status = 'Ditolak'; item.password = '';
+            if (saveAdminRequests(requests)) { renderAdminRequests(); showToast('Permohonan ditolak.'); }
+          };
+          td.appendChild(approve); td.appendChild(reject);
+        } else { td.textContent = '—'; }
+        tr.appendChild(td); body.appendChild(tr);
+      });
+    }
+
+    window.handleLogin = function() {
+      const id = document.getElementById('login-id').value.trim();
+      const pwd = document.getElementById('login-pwd').value.trim();
+
+      if (!id || !pwd) {
+        showToast('Mohon masukkan ID dan kata sandi.');
+        return;
+      }
+
+      const account = getAdminAccounts().find(a => String(a.id).toUpperCase() === id.toUpperCase());
+      if (!account || account.password !== pwd) {
+        showToast('ID atau kata sandi admin tidak valid. Login siswa dinonaktifkan.');
+        return;
+      }
+      currentUser = { id: account.id, nama: account.nama, role: account.role };
+      try { localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser)); }
+      catch (e) { showToast('Sesi gagal disimpan pada perangkat ini.'); return; }
+      showToast(account.role === 'SUPER_ADMIN' ? 'Berhasil masuk sebagai Super Admin.' : 'Berhasil masuk sebagai Admin.');
+      checkSession();
+    };
+
+    function setupEventListeners() {
+      const adminMgmtButton = document.getElementById('btn-toggle-admin-management');
+      if (adminMgmtButton) adminMgmtButton.onclick = () => {
+        if (!currentUser || currentUser.role !== 'SUPER_ADMIN') {
+          showToast('Hanya Super Admin yang dapat membuka manajemen akun.');
+          return;
+        }
+        const panel = document.getElementById('panel-admin-management');
+        if (!panel) return;
+        const opening = panel.classList.contains('hidden');
+        panel.classList.toggle('hidden', !opening);
+        adminMgmtButton.textContent = opening ? 'Sembunyikan Manajemen Akun' : 'Tampilkan Manajemen Akun';
+        adminMgmtButton.setAttribute('aria-expanded', opening ? 'true' : 'false');
+      };
+      const registerButton = document.getElementById('btn-show-register');
+      if (registerButton) registerButton.onclick = () => {
+        document.getElementById('panel-auth').classList.add('hidden');
+        document.getElementById('panel-admin-register').classList.remove('hidden');
+      };
+      const cancelRegister = document.getElementById('btn-register-cancel');
+      if (cancelRegister) cancelRegister.onclick = () => {
+        document.getElementById('panel-admin-register').classList.add('hidden');
+        document.getElementById('panel-auth').classList.remove('hidden');
+      };
+      const registerForm = document.getElementById('form-admin-register');
+      if (registerForm) registerForm.onsubmit = (e) => {
+        e.preventDefault();
+        const id = document.getElementById('register-admin-id').value.trim().toUpperCase();
+        const nama = document.getElementById('register-admin-name').value.trim();
+        const pwd = document.getElementById('register-admin-pwd').value;
+        const pwd2 = document.getElementById('register-admin-pwd2').value;
+        if (!/^ADMIN[0-9]+$/.test(id)) { showToast('Format ID harus ADMIN1, ADMIN2, ADMIN3, dan seterusnya.'); return; }
+        if (pwd.length < 8 || pwd !== pwd2) { showToast('Kata sandi minimal 8 karakter dan harus sama.'); return; }
+        if (getAdminAccounts().some(a => a.id.toUpperCase() === id) ||
+            getAdminRequests().some(r => r.id.toUpperCase() === id && r.status === 'Menunggu')) {
+          showToast('ID sudah digunakan atau masih menunggu persetujuan.'); return;
+        }
+        const requests = getAdminRequests();
+        requests.push({
+          requestId: 'REQ-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+          id, nama, password: pwd, status: 'Menunggu',
+          submittedAt: new Date().toISOString()
+        });
+        if (!saveAdminRequests(requests)) return;
+        registerForm.reset();
+        document.getElementById('panel-admin-register').classList.add('hidden');
+        document.getElementById('panel-auth').classList.remove('hidden');
+        showToast('Permohonan dikirim. Akun belum bisa login sebelum disetujui Super Admin.');
+      };
+
+      const setupForm = document.getElementById('form-first-setup');
+      if (setupForm) setupForm.onsubmit = (e) => {
+        e.preventDefault();
+        if (getAdminAccounts().length) { showToast('Super Admin sudah dibuat.'); checkSession(); return; }
+        const id = document.getElementById('setup-admin-id').value.trim().toUpperCase();
+        const nama = document.getElementById('setup-admin-name').value.trim();
+        const pwd = document.getElementById('setup-admin-pwd').value;
+        const pwd2 = document.getElementById('setup-admin-pwd2').value;
+        if (!/^[A-Z0-9_-]{4,30}$/.test(id)) { showToast('ID hanya boleh berisi huruf, angka, _ atau - (4–30 karakter).'); return; }
+        if (pwd.length < 8 || pwd !== pwd2) { showToast('Kata sandi minimal 8 karakter dan harus sama.'); return; }
+        const accounts = [{ id, nama, password: pwd, role: 'SUPER_ADMIN' }];
+        if (!saveAdminAccounts(accounts)) return;
+        setupForm.reset();
+        document.getElementById('login-id').value = id;
+        showToast('Super Admin berhasil dibuat. Silakan login.');
+        checkSession();
+      };
+
+      const createAdminForm = document.getElementById('form-create-admin');
+      if (createAdminForm) createAdminForm.onsubmit = (e) => {
+        e.preventDefault();
+        if (!currentUser || currentUser.role !== 'SUPER_ADMIN') { showToast('Hanya Super Admin yang boleh membuat akun admin.'); return; }
+        const id = document.getElementById('new-admin-id').value.trim().toUpperCase();
+        const nama = document.getElementById('new-admin-name').value.trim();
+        const pwd = document.getElementById('new-admin-pwd').value;
+        if (!/^ADMIN[0-9]+$/.test(id)) { showToast('Format ID harus ADMIN1, ADMIN2, ADMIN3, dan seterusnya.'); return; }
+        if (pwd.length < 8) { showToast('Kata sandi minimal 8 karakter.'); return; }
+        const accounts = getAdminAccounts();
+        if (accounts.some(a => a.id.toUpperCase() === id)) { showToast('ID admin tersebut sudah digunakan.'); return; }
+        accounts.push({ id, nama, password: pwd, role: 'ADMIN' });
+        if (!saveAdminAccounts(accounts)) return;
+        createAdminForm.reset(); renderAdminAccounts(); showToast('Akun ' + id + ' berhasil dibuat.');
+      };
+
+      const btnLogout = document.getElementById('btn-logout');
+      if (btnLogout) {
+        btnLogout.onclick = () => {
+          currentUser = null;
+          localStorage.removeItem(STORAGE_KEY_AUTH);
+          showToast('Anda telah keluar.');
+          checkSession();
+        };
+      }
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.onclick = () => {
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          const tabId = btn.getAttribute('data-tab');
+          ['tab-siswa', 'tab-laporan', 'tab-rekap', 'tab-running-text'].forEach(id => {
+            const sec = document.getElementById(id);
+            if (sec) {
+              if (id === tabId) sec.classList.remove('hidden');
+              else sec.classList.add('hidden');
+            }
+          });
+
+          if (tabId === 'tab-siswa') renderTabelSiswa();
+          if (tabId === 'tab-rekap') renderTabelRekap();
+        };
+      });
+
+      // PENCARIAN SISWA 1 KOLOM
+      const inputCariSiswa = document.getElementById('filter-siswa-cari');
+      if (inputCariSiswa) {
+        inputCariSiswa.addEventListener('input', renderTabelSiswa);
+      }
+
+      // FILTER REKAP DINAMIS
+      ['rekap-date-start', 'rekap-date-end', 'rekap-filter-jenis'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('change', renderTabelRekap);
+      });
+
+      const btnAddSiswa = document.getElementById('btn-tambah-siswa');
+      if (btnAddSiswa) {
+        btnAddSiswa.onclick = () => {
+          document.getElementById('form-tambah-siswa').reset();
+          openModal('modal-form-siswa');
+        };
+      }
+
+      document.querySelectorAll('.btn-close-modal').forEach(btn => {
+        btn.onclick = () => closeModal();
+      });
+
+      // UNDUH PDF REKAPITULASI
+      const btnDownloadPdf = document.getElementById('btn-download-rekap-pdf');
+      if (btnDownloadPdf) {
+        btnDownloadPdf.onclick = () => {
+          const filtered = getFilteredRekap();
+          if (filtered.length === 0) {
+            showToast('Tidak ada data laporan untuk diunduh.');
+            return;
+          }
+          const blob = generatePDFBlob(filtered);
+          const fname = getNamaFileRekap();
+          downloadBlobFile(blob, fname);
+          showToast('Mengunduh PDF: ' + fname);
+        };
+      }
+
+      const btnExportSiswaCsv = document.getElementById('btn-export-siswa-csv');
+      if (btnExportSiswaCsv) btnExportSiswaCsv.onclick = exportSiswaCSV;
+      const btnExportSiswaExcel = document.getElementById('btn-export-siswa-excel');
+      if (btnExportSiswaExcel) btnExportSiswaExcel.onclick = exportSiswaExcel;
+
+      const btnWa = document.getElementById('btn-share-wa-pdf');
+      if (btnWa) btnWa.onclick = () => bagikanPDF('wa');
+
+      const btnTele = document.getElementById('btn-share-telegram-pdf');
+      if (btnTele) btnTele.onclick = () => bagikanPDF('tele');
+
+      // KETIK NOSIS OTOMATIS PILIH SISWA
+      const inpKetikNosis = document.getElementById('lap-input-nosis');
+      const selLapNosis = document.getElementById('lap-nosis');
+      const matchedHint = document.getElementById('lap-siswa-matched-hint');
+
+      if (inpKetikNosis && selLapNosis) {
+        inpKetikNosis.addEventListener('input', function() {
+          const val = this.value.trim().toLowerCase();
+          if (!val) {
+            if (matchedHint) {
+              matchedHint.textContent = 'Ketik nomor siswa untuk memilih otomatis';
+              matchedHint.className = 'text-xs text-muted';
+            }
+            return;
+          }
+
+          const target = appSiswa.find(s => s.nosis.toLowerCase() === val) ||
+                         appSiswa.find(s => s.nosis.toLowerCase().startsWith(val));
+
+          if (target) {
+            selLapNosis.value = target.nosis;
+            if (matchedHint) {
+              matchedHint.innerHTML = `✓ Terpilih: <strong class="text-gold">${target.nama}</strong> (Kompi ${target.kompi} / Ton ${target.pleton} / Kelas ${target.kelas})`;
+              matchedHint.className = 'text-xs text-success';
+            }
+          } else {
+            if (matchedHint) {
+              matchedHint.textContent = '⚠ Siswa dengan NOSIS tersebut tidak ditemukan';
+              matchedHint.className = 'text-xs text-danger';
+            }
+          }
+        });
+
+        selLapNosis.addEventListener('change', function() {
+          inpKetikNosis.value = this.value;
+          const target = appSiswa.find(s => s.nosis === this.value);
+          if (target && matchedHint) {
+            matchedHint.innerHTML = `✓ Terpilih: <strong class="text-gold">${target.nama}</strong> (Kompi ${target.kompi} / Ton ${target.pleton} / Kelas ${target.kelas})`;
+            matchedHint.className = 'text-xs text-success';
+          }
+        });
+      }
+
+      // DINAMISASI LABEL INPUT LAPORAN
+      const selLapJenis = document.getElementById('lap-jenis');
+      if (selLapJenis) {
+        selLapJenis.onchange = () => {
+          const lblDiag = document.getElementById('lbl-lap-diagnosa');
+          const lblTindakan = document.getElementById('lbl-lap-tindakan');
+          const inpDiag = document.getElementById('lap-diagnosa');
+          const inpTindakan = document.getElementById('lap-tindakan');
+
+          if (selLapJenis.value === 'PRESTASI') {
+            if (lblDiag) lblDiag.textContent = 'Nama / Uraian Prestasi';
+            if (lblTindakan) lblTindakan.textContent = 'Bentuk Penghargaan / Piagam';
+            if (inpDiag) inpDiag.placeholder = 'Contoh: Juara 1 Menembak Presisi';
+            if (inpTindakan) inpTindakan.placeholder = 'Contoh: Piagam Penghargaan Dansecaba';
+          } else if (selLapJenis.value === 'PELANGGARAN') {
+            if (lblDiag) lblDiag.textContent = 'Jenis / Bentuk Pelanggaran';
+            if (lblTindakan) lblTindakan.textContent = 'Tindakan Disiplin / Sanksi';
+            if (inpDiag) inpDiag.placeholder = 'Contoh: Terlambat Masuk Kesatrian';
+            if (inpTindakan) inpTindakan.placeholder = 'Contoh: Tindakan Disiplin Fisik Terukur';
+          } else if (selLapJenis.value === 'PRESTASI_PELANGGARAN') {
+            if (lblDiag) lblDiag.textContent = 'Uraian Prestasi / Pelanggaran';
+            if (lblTindakan) lblTindakan.textContent = 'Bentuk Penghargaan / Tindakan Disiplin';
+            if (inpDiag) inpDiag.placeholder = 'Uraian prestasi atau pelanggaran...';
+            if (inpTindakan) inpTindakan.placeholder = 'Tindakan penghargaan / pembinaan...';
+          } else {
+            if (lblDiag) lblDiag.textContent = 'Diagnosa / Keterangan Sakit';
+            if (lblTindakan) lblTindakan.textContent = 'Tindakan / Pengobatan / Rawat';
+            if (inpDiag) inpDiag.placeholder = 'Contoh: ISPA / Demam tinggi';
+            if (inpTindakan) inpTindakan.placeholder = 'Contoh: Istirahat di Barak Tonkes';
+          }
+        };
+      }
+    }
+
+    function openModal(id) {
+      const m = document.getElementById(id);
+      if (m) m.classList.remove('hidden');
+    }
+    function closeModal() {
+      document.querySelectorAll('.modal-overlay').forEach(m => m.classList.add('hidden'));
+    }
+
+    function populateDropdownSiswa() {
+      const sel = document.getElementById('lap-nosis');
+      if (!sel) return;
+      sel.innerHTML = '<option value="">-- Pilih Siswa --</option>';
+      appSiswa.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.nosis;
+        opt.textContent = `${s.nosis} - ${s.nama} (K${s.kompi}/T${s.pleton}/Kls ${s.kelas})`;
+        sel.appendChild(opt);
+      });
+
+      const inpNosis = document.getElementById('lap-input-nosis');
+      if (inpNosis && !inpNosis.value && appSiswa.length > 0) {
+        sel.value = appSiswa[0].nosis;
+        inpNosis.value = appSiswa[0].nosis;
+        const matchedHint = document.getElementById('lap-siswa-matched-hint');
+        if (matchedHint) {
+          matchedHint.innerHTML = `✓ Terpilih: <strong class="text-gold">${appSiswa[0].nama}</strong> (Kompi ${appSiswa[0].kompi} / Ton ${appSiswa[0].pleton} / Kelas ${appSiswa[0].kelas})`;
+          matchedHint.className = 'text-xs text-success';
+        }
+      }
+    }
+
+    function renderTabelSiswa() {
+      const tbody = document.getElementById('table-body-siswa');
+      const emptyMsg = document.getElementById('siswa-empty-msg');
+      if (!tbody) return;
+
+      const queryCari = (document.getElementById('filter-siswa-cari')?.value || '').trim().toLowerCase();
+
+      const filtered = appSiswa.filter(s => {
+        if (!queryCari) return true;
+        const matchNama = (s.nama || '').toLowerCase().includes(queryCari);
+        const matchNosis = (s.nosis || '').toLowerCase().includes(queryCari);
+        return matchNama || matchNosis;
+      });
+
+      tbody.innerHTML = '';
+      if (filtered.length === 0) {
+        emptyMsg.classList.remove('hidden');
+        return;
+      }
+      emptyMsg.classList.add('hidden');
+
+      filtered.forEach((s, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td class="font-bold text-gold">${escapeHTML(s.nosis)}</td>
+          <td>${escapeHTML(s.nama)}</td>
+          <td>${s.pangkat || 'Siswa'}</td>
+          <td><span class="badge badge-gold">${escapeHTML(s.kompi)}</span></td>
+          <td><span class="badge badge-blue">${s.kelas || '-'}</span></td>
+          <td>${s.pleton || '-'}</td>
+          <td>${s.suku || '-'}</td>
+          <td>${s.ttl || '-'}</td>
+          <td>${s.agama || '-'}</td>
+          <td><span class="badge badge-gold">${s.golDarah || '-'}</span></td>
+          <td>${s.pendidikanUmum || '-'}</td>
+          <td>${s.tahunLulus || '-'}</td>
+          <td style="max-width:140px; overflow:hidden; text-overflow:ellipsis;" title="${s.alamat || '-'}">${s.alamat || '-'}</td>
+          <td>
+            <button class="btn btn-info btn-sm" onclick="window.lihatDetailSiswa('${s.nosis}')">👁️ Rincian</button>
+          </td>
+          <td><span class="badge badge-success">${s.status || 'Aktif'}</span></td>
+          <td>
+            ${currentUser && ['ADMIN', 'SUPER_ADMIN'].includes(currentUser.role) ? 
+              `<button class="btn btn-danger btn-sm" onclick="window.hapusSiswa('${s.nosis}')">Hapus</button>` : 
+              `<span class="text-xs text-muted">-</span>`
+            }
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    window.lihatDetailSiswa = function(nosis) {
+      const siswa = appSiswa.find(s => s.nosis === nosis);
+      if (!siswa) return;
+
+      const cont = document.getElementById('detail-siswa-content');
+      if (!cont) return;
+
+      const riwayat = appLaporan.filter(l => l.nosis === nosis);
+
+      cont.innerHTML = `
+        <div style="background:#071009; border:1px solid var(--border-gold); border-radius:8px; padding:12px; margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-dark); padding-bottom:8px; margin-bottom:8px;">
+            <div>
+              <span class="text-xs text-muted">NOMOR SISWA (NOSIS)</span>
+              <div class="font-bold text-gold" style="font-size:16px;">${siswa.nosis}</div>
+            </div>
+            <span class="badge badge-success">${siswa.status || 'Aktif'}</span>
+          </div>
+
+          <div style="font-size:14px; font-weight:800; color:#fff; margin-bottom:8px;">
+            ${siswa.nama} <span class="text-xs text-muted">(${siswa.pangkat || 'Siswa'})</span>
+          </div>
+
+          <div class="grid-3" style="gap:6px; font-size:11px; margin-bottom:8px;">
+            <div><span class="text-muted">Kompi:</span> <strong class="text-gold">${siswa.kompi}</strong></div>
+            <div><span class="text-muted">Kelas:</span> <strong class="text-gold">${siswa.kelas || '-'}</strong></div>
+            <div><span class="text-muted">Pleton:</span> <strong class="text-gold">${siswa.pleton || '-'}</strong></div>
+          </div>
+
+          <div class="grid-2" style="gap:6px; font-size:11px; margin-bottom:8px;">
+            <div><span class="text-muted">Suku:</span> ${siswa.suku || '-'}</div>
+            <div><span class="text-muted">Agama:</span> ${siswa.agama || '-'}</div>
+            <div><span class="text-muted">TTL:</span> ${siswa.ttl || '-'}</div>
+            <div><span class="text-muted">Gol. Darah:</span> <strong>${siswa.golDarah || '-'}</strong></div>
+            <div><span class="text-muted">Pendidikan Umum:</span> ${siswa.pendidikanUmum || '-'}</div>
+            <div><span class="text-muted">Tahun Lulus:</span> ${siswa.tahunLulus || '-'}</div>
+          </div>
+
+          <div style="font-size:11px; border-top:1px solid #142417; padding-top:6px;">
+            <span class="text-muted">Alamat Domisili:</span><br>
+            <span>${siswa.alamat || '-'}</span>
+          </div>
+        </div>
+
+        <div style="font-size:12px; font-weight:700; color:var(--gold-primary); margin-bottom:6px;">
+          RIWAYAT LAPORAN SISWA (${riwayat.length})
+        </div>
+
+        ${riwayat.length === 0 ? 
+          `<p class="text-xs text-muted" style="text-align:center; padding:10px; background:#080f0a; border-radius:6px;">Belum ada riwayat laporan untuk siswa ini.</p>` :
+          `<div class="table-container" style="max-height:160px; overflow-y:auto; margin-top:4px;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tgl</th>
+                  <th>Jenis</th>
+                  <th>Uraian</th>
+                  <th>Tindakan</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${riwayat.map(r => `
+                  <tr>
+                    <td>${r.tanggal}</td>
+                    <td><span class="badge ${r.jenis === 'PRESTASI' ? 'badge-success' : (r.jenis === 'PELANGGARAN' ? 'badge-gold' : (r.jenis === 'PRESTASI_PELANGGARAN' ? 'badge-blue' : 'badge-danger'))}">${r.jenis}</span></td>
+                    <td>${r.diagnosa}</td>
+                    <td>${r.tindakan}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>`
+        }
+      `;
+
+      openModal('modal-detail-siswa');
+    };
+
+    window.simpanSiswaBaru = function() {
+      const nosis = document.getElementById('add-nosis').value.trim();
+      const nama = document.getElementById('add-nama').value.trim();
+
+      if (!nosis || !nama) {
+        showToast('NOSIS dan Nama wajib diisi.');
+        return;
+      }
+
+      if (appSiswa.some(s => s.nosis.toLowerCase() === nosis.toLowerCase())) {
+        showToast('NOSIS sudah terdaftar!');
+        return;
+      }
+
+      const baru = {
+        nosis: nosis,
+        nama: nama,
+        pangkat: document.getElementById('add-pangkat').value.trim() || 'Siswa',
+        kompi: document.getElementById('add-kompi').value,
+        kelas: (document.getElementById('add-kelas').value.trim() || 'A1').toUpperCase(),
+        pleton: document.getElementById('add-pleton').value,
+        suku: document.getElementById('add-suku').value.trim() || '-',
+        ttl: document.getElementById('add-ttl').value.trim() || '-',
+        agama: document.getElementById('add-agama').value,
+        golDarah: document.getElementById('add-goldarah').value,
+        pendidikanUmum: document.getElementById('add-pendidikan').value.trim() || '-',
+        tahunLulus: document.getElementById('add-thnlulus').value.trim() || '-',
+        alamat: document.getElementById('add-alamat').value.trim() || '-',
+        status: document.getElementById('add-status').value
+      };
+
+      appSiswa.push(baru);
+      if (!saveLocal(STORAGE_KEY_SISWA, appSiswa)) return;
+      populateDropdownSiswa();
+      renderTabelSiswa();
+      closeModal();
+      showToast('Data siswa berhasil disimpan.');
+    };
+
+    window.hapusSiswa = function(nosis) {
+      if (!confirm(`Hapus data siswa dengan NOSIS: ${nosis}?`)) return;
+      appSiswa = appSiswa.filter(s => s.nosis !== nosis);
+      if (!saveLocal(STORAGE_KEY_SISWA, appSiswa)) return;
+      populateDropdownSiswa();
+      renderTabelSiswa();
+      showToast('Data siswa telah dihapus.');
+    };
+
+    window.downloadTemplateExcel = function() {
+      if (typeof XLSX === 'undefined') {
+        showToast('Pustaka Excel belum siap, mohon periksa koneksi.');
+        return;
+      }
+
+      const templateData = [
+        {
+          NOSIS: '2024004',
+          NAMA: 'Deni Kurniawan',
+          PANGKAT: 'Siswa',
+          KOMPI: '1',
+          KELAS: 'A1',
+          PLETON: '1',
+          SUKU: 'Sunda',
+          TTL: 'Cimahi, 15-08-2003',
+          AGAMA: 'Islam',
+          GOL_DARAH: 'O',
+          PENDIDIKAN_UMUM: 'SMA',
+          TAHUN_LULUS: '2022',
+          ALAMAT: 'Jl. Gatot Subroto No. 10 Cimahi',
+          STATUS: 'Aktif'
+        },
+        {
+          NOSIS: '2024005',
+          NAMA: 'Eko Prasetyo',
+          PANGKAT: 'Siswa',
+          KOMPI: '2',
+          KELAS: 'D2',
+          PLETON: '2',
+          SUKU: 'Jawa',
+          TTL: 'Solo, 22-11-2002',
+          AGAMA: 'Islam',
+          GOL_DARAH: 'B',
+          PENDIDIKAN_UMUM: 'SMK',
+          TAHUN_LULUS: '2021',
+          ALAMAT: 'Jl. Slamet Riyadi No. 45 Solo',
+          STATUS: 'Aktif'
+        }
+      ];
+
+      const ws = XLSX.utils.json_to_sheet(templateData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'TemplateSiswa');
+      XLSX.writeFile(wb, 'TEMPLATE_DATA_SISWA_SECABA.xlsx');
+      showToast('Mengunduh Berkas Template Excel...');
+    };
+
+    function exportSiswaExcel() {
+      if (!appSiswa.length) {
+        showToast('Tidak ada data siswa untuk diekspor.');
+        return;
+      }
+      if (typeof XLSX === 'undefined') {
+        showToast('Pustaka Excel belum tersedia. Periksa koneksi lalu muat ulang aplikasi, atau gunakan Unduh CSV.');
+        return;
+      }
+      const rows = appSiswa.map((s, i) => ({
+        NO: i + 1,
+        NOSIS: String(s.nosis ?? ''),
+        NAMA: s.nama ?? '',
+        PANGKAT: s.pangkat ?? '',
+        KOMPI: s.kompi ?? '',
+        KELAS: s.kelas ?? '',
+        PLETON: s.pleton ?? '',
+        SUKU: s.suku ?? '',
+        TTL: s.ttl ?? '',
+        AGAMA: s.agama ?? '',
+        GOL_DARAH: s.golDarah ?? '',
+        PENDIDIKAN_UMUM: s.pendidikanUmum ?? '',
+        TAHUN_LULUS: s.tahunLulus ?? '',
+        ALAMAT: s.alamat ?? '',
+        STATUS: s.status ?? 'Aktif'
+      }));
+      const ws = XLSX.utils.json_to_sheet(rows);
+      ws['!cols'] = [{wch:6},{wch:16},{wch:28},{wch:14},{wch:9},{wch:9},{wch:9},{wch:16},{wch:24},{wch:20},{wch:12},{wch:20},{wch:14},{wch:38},{wch:14}];
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Data Siswa');
+      XLSX.writeFile(wb, `DATA_NOMINATIF_SISWA_${getLocalDateISO()}.xlsx`);
+      showToast('Excel berhasil dibuat. Edit data lalu impor kembali untuk memperbarui siswa.');
+    }
+
+    window.handleImportExcel = function(input) {
+      const file = input.files && input.files[0];
+      if (!file) return;
+      const resetInput = () => { input.value = ''; };
+      if (typeof XLSX === 'undefined') {
+        showToast('Pustaka Excel tidak tersedia. Periksa koneksi internet, muat ulang aplikasi, atau simpan berkas sebagai CSV.');
+        resetInput();
+        return;
+      }
+      const reader = new FileReader();
+      reader.onerror = function() { showToast('Berkas tidak dapat dibaca oleh perangkat.'); resetInput(); };
+      reader.onload = function(e) {
+        try {
+          const workbook = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+          const sheetName = workbook.SheetNames[0];
+          if (!sheetName) throw new Error('Lembar kerja tidak ditemukan.');
+          const worksheet = workbook.Sheets[sheetName];
+          const rows = XLSX.utils.sheet_to_json(worksheet, { defval: '', raw: false });
+          if (!rows.length) throw new Error('File kosong atau hanya berisi judul kolom.');
+
+          const normalize = value => String(value ?? '').trim().toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Z0-9]/g, '');
+          const fieldAliases = {
+            nosis: ['NOSIS','NO SISWA','NOMOR SISWA','NO'],
+            nama: ['NAMA','NAMA LENGKAP','NAMA SISWA'],
+            pangkat: ['PANGKAT'], kompi: ['KOMPI'], kelas: ['KELAS','KLS'], pleton: ['PLETON','TON'],
+            suku: ['SUKU'], ttl: ['TTL','TEMPAT TANGGAL LAHIR'], agama: ['AGAMA'],
+            golDarah: ['GOL DARAH','GOLONGAN DARAH','GOL'],
+            pendidikanUmum: ['PENDIDIKAN UMUM','PENDIDIKAN'],
+            tahunLulus: ['TAHUN LULUS','THN LULUS'], alamat: ['ALAMAT','DOMISILI'], status: ['STATUS']
+          };
+          const aliases = Object.fromEntries(Object.entries(fieldAliases).map(([field, names]) => [field, names.map(normalize)]));
+          const getVal = (row, field) => {
+            const key = Object.keys(row).find(k => aliases[field].includes(normalize(k)));
+            return key === undefined ? '' : String(row[key] ?? '').trim();
+          };
+          const valid = rows.map(row => ({ row, nosis: getVal(row,'nosis'), nama: getVal(row,'nama') })).filter(x => x.nosis && x.nama);
+          if (!valid.length) throw new Error('Kolom wajib NOSIS dan NAMA tidak ditemukan atau kosong. Gunakan tombol Format Excel sebagai acuan.');
+
+          let addedCount = 0, updatedCount = 0;
+          const nextSiswa = appSiswa.slice();
+          valid.forEach(({row, nosis, nama}) => {
+            const existingIndex = nextSiswa.findIndex(s => String(s.nosis).trim().toLowerCase() === nosis.toLowerCase());
+            const existing = existingIndex >= 0 ? nextSiswa[existingIndex] : {};
+            // Kolom kosong mempertahankan nilai lama agar edit sebagian tidak menghapus data siswa.
+            const read = (field, fallback) => {
+              const value = getVal(row, field);
+              return value !== '' ? value : (existing[field] !== undefined && existing[field] !== '' ? existing[field] : fallback);
+            };
+            const rawKelas = read('kelas', 'A1').toUpperCase().trim();
+            const siswaObj = {
+              ...existing,
+              nosis,
+              nama,
+              pangkat: read('pangkat','Siswa'),
+              kompi: read('kompi','1').replace(/[^0-9]/g,'') || '1',
+              kelas: rawKelas || 'A1',
+              pleton: read('pleton','1').replace(/[^0-9]/g,'') || '1',
+              suku: read('suku','-'), ttl: read('ttl','-'), agama: read('agama','Islam'),
+              golDarah: read('golDarah','-'), pendidikanUmum: read('pendidikanUmum','-'),
+              tahunLulus: read('tahunLulus','-'), alamat: read('alamat','-'), status: read('status','Aktif')
+            };
+            if (existingIndex >= 0) { nextSiswa[existingIndex] = siswaObj; updatedCount++; }
+            else { nextSiswa.push(siswaObj); addedCount++; }
+          });
+          if (!saveLocal(STORAGE_KEY_SISWA, nextSiswa)) return;
+          appSiswa = nextSiswa;
+          populateDropdownSiswa();
+          renderTabelSiswa();
+          showToast(`Impor berhasil: ${addedCount} siswa baru, ${updatedCount} data diperbarui.`);
+        } catch (err) {
+          console.error('Impor data siswa gagal:', err);
+          showToast(err.message || 'Gagal membaca Excel/CSV. Periksa format kolom.');
+        } finally { resetInput(); }
+      };
+      reader.readAsArrayBuffer(file);
+    };
+
+    window.handleFotoInput = function(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 800;
+          let w = img.width;
+          let h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+            else { w = Math.round((w * maxDim) / h); h = maxDim; }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          tempLaporanFoto = canvas.toDataURL('image/jpeg', 0.7);
+
+          document.getElementById('lap-foto-nama').textContent = file.name || 'Foto dari kamera';
+          document.getElementById('lap-foto-preview-img').src = tempLaporanFoto;
+          document.getElementById('lap-foto-preview-box').classList.remove('hidden');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    };
+
+    window.hapusFotoLaporan = function() {
+      tempLaporanFoto = '';
+      document.getElementById('lap-file-input').value = '';
+      const cameraInput = document.getElementById('lap-camera-input');
+      if (cameraInput) cameraInput.value = '';
+      document.getElementById('lap-foto-nama').textContent = 'Belum ada gambar atau foto kamera';
+      document.getElementById('lap-foto-preview-box').classList.add('hidden');
+    };
+
+    window.simpanLaporanBaru = function() {
+      const nosis = document.getElementById('lap-nosis').value;
+      const siswa = appSiswa.find(s => s.nosis === nosis);
+      if (!siswa) {
+        showToast('Siswa tidak ditemukan.');
+        return;
+      }
+
+      const jenisDipilih = document.getElementById('lap-jenis').value;
+
+      const lapBaru = {
+        id: 'LAP-' + Date.now().toString().slice(-5),
+        tanggal: document.getElementById('lap-tanggal').value || getLocalDateISO(),
+        nosis: siswa.nosis,
+        nama: siswa.nama,
+        pelapor: (currentUser && (currentUser.nama || currentUser.id)) ? (currentUser.nama || currentUser.id) : 'Tidak diketahui',
+        kompi: siswa.kompi,
+        kelas: siswa.kelas || 'A1',
+        pleton: siswa.pleton || '1',
+        jenis: jenisDipilih,
+        diagnosa: document.getElementById('lap-diagnosa').value.trim(),
+        tindakan: document.getElementById('lap-tindakan').value.trim(),
+        foto: tempLaporanFoto,
+        status: 'DISETUJUI'
+      };
+
+      appLaporan.unshift(lapBaru);
+      if (!saveLocal(STORAGE_KEY_LAPORAN, appLaporan)) return;
+
+      document.getElementById('form-laporan').reset();
+      const matchedHint = document.getElementById('lap-siswa-matched-hint');
+      if (matchedHint) {
+        matchedHint.textContent = 'Ketik nomor siswa untuk memilih otomatis';
+        matchedHint.className = 'text-xs text-muted';
+      }
+      hapusFotoLaporan();
+      showToast('✓ Laporan berhasil dibuat dan OTOMATIS DISETUJUI.');
+
+      const filterJenisEl = document.getElementById('rekap-filter-jenis');
+      if (filterJenisEl) filterJenisEl.value = lapBaru.jenis;
+      document.querySelector('[data-tab="tab-rekap"]').click();
+    };
+
+    window.handlePresetPeriode = function(val) {
+      const now = new Date();
+      const startEl = document.getElementById('rekap-date-start');
+      const endEl = document.getElementById('rekap-date-end');
+      if (!startEl || !endEl) return;
+
+      if (val === 'minggu-ini') {
+        const day = now.getDay() || 7;
+        const monday = new Date(now);
+        monday.setDate(now.getDate() - day + 1);
+        const sunday = new Date(monday);
+        sunday.setDate(monday.getDate() + 6);
+        startEl.value = monday.toISOString().split('T')[0];
+        endEl.value = sunday.toISOString().split('T')[0];
+      } else if (val === 'minggu-lalu') {
+        const day = now.getDay() || 7;
+        const lastMonday = new Date(now);
+        lastMonday.setDate(now.getDate() - day - 6);
+        const lastSunday = new Date(lastMonday);
+        lastSunday.setDate(lastMonday.getDate() + 6);
+        startEl.value = lastMonday.toISOString().split('T')[0];
+        endEl.value = lastSunday.toISOString().split('T')[0];
+      } else if (val === 'bulan-ini') {
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        startEl.value = firstDay.toISOString().split('T')[0];
+        endEl.value = lastDay.toISOString().split('T')[0];
+      } else if (val === 'semua') {
+        startEl.value = '';
+        endEl.value = '';
+      }
+      renderTabelRekap();
+    };
+
+    function getFilteredRekap() {
+      const dStart = document.getElementById('rekap-date-start')?.value;
+      const dEnd = document.getElementById('rekap-date-end')?.value;
+      const fJenis = document.getElementById('rekap-filter-jenis')?.value || 'SAKIT';
+      if (dStart && dEnd && dStart > dEnd) {
+        showToast('Tanggal mulai tidak boleh melewati tanggal akhir.');
+        return [];
+      }
+
+      return appLaporan.filter(l => {
+        let matchDate = true;
+        if (dStart && l.tanggal < dStart) matchDate = false;
+        if (dEnd && l.tanggal > dEnd) matchDate = false;
+
+        let matchJenis = false;
+        if (fJenis === 'PRESTASI') {
+          matchJenis = (l.jenis === 'PRESTASI' || l.jenis === 'REWARD');
+        } else if (fJenis === 'PELANGGARAN') {
+          matchJenis = (l.jenis === 'PELANGGARAN');
+        } else if (fJenis === 'PRESTASI_PELANGGARAN') {
+          matchJenis = (l.jenis === 'PRESTASI' || l.jenis === 'REWARD' || l.jenis === 'PELANGGARAN' || l.jenis === 'PRESTASI_PELANGGARAN');
+        } else {
+          matchJenis = (l.jenis === 'SAKIT');
+        }
+
+        return matchDate && matchJenis;
+      });
+    }
+
+    function renderTabelRekap() {
+      const tbody = document.getElementById('table-body-rekap');
+      const emptyMsg = document.getElementById('rekap-empty-msg');
+      if (!tbody) return;
+
+      const filtered = getFilteredRekap();
+
+      const dStart = document.getElementById('rekap-date-start')?.value;
+      const dEnd = document.getElementById('rekap-date-end')?.value;
+      const periodLaporan = appLaporan.filter(l => {
+        let ok = true;
+        if (dStart && l.tanggal < dStart) ok = false;
+        if (dEnd && l.tanggal > dEnd) ok = false;
+        return ok;
+      });
+
+      document.getElementById('stat-total-laporan').textContent = filtered.length;
+      document.getElementById('stat-total-sakit').textContent = periodLaporan.filter(l => l.jenis === 'SAKIT').length;
+      document.getElementById('stat-total-prestasi').textContent = periodLaporan.filter(l => l.jenis === 'PRESTASI' || l.jenis === 'REWARD').length;
+      document.getElementById('stat-total-pelanggaran').textContent = periodLaporan.filter(l => l.jenis === 'PELANGGARAN').length;
+
+      tbody.innerHTML = '';
+      if (filtered.length === 0) {
+        emptyMsg.classList.remove('hidden');
+        return;
+      }
+      emptyMsg.classList.add('hidden');
+
+      filtered.forEach((l, idx) => {
+        const tr = document.createElement('tr');
+        let displayJenis = 'KESEHATAN';
+        let badgeClass = 'badge-danger';
+
+        if (l.jenis === 'PRESTASI' || l.jenis === 'REWARD') {
+          displayJenis = 'PRESTASI';
+          badgeClass = 'badge-success';
+        } else if (l.jenis === 'PELANGGARAN') {
+          displayJenis = 'PELANGGARAN';
+          badgeClass = 'badge-gold';
+        } else if (l.jenis === 'PRESTASI_PELANGGARAN') {
+          displayJenis = 'PRESTASI & PELANGGARAN';
+          badgeClass = 'badge-blue';
+        }
+
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td>${escapeHTML(l.tanggal)}</td>
+          <td class="font-bold text-gold">${escapeHTML(l.nosis)}</td>
+          <td>${escapeHTML(l.nama)}</td>
+          <td>K${escapeHTML(l.kompi)} / T${escapeHTML(l.pleton)}</td>
+          <td><span class="badge ${badgeClass}">${displayJenis}</span></td>
+          <td>${escapeHTML(l.diagnosa)}</td>
+          <td>${escapeHTML(l.tindakan)}</td>
+          <td>
+            ${l.foto ? 
+              `<button class="btn btn-dark btn-sm" onclick="window.lihatFotoPenuh('${l.id}')">🖼️ Lihat Foto</button>` : 
+              `<span class="text-xs text-muted">-</span>`
+            }
+          </td>
+          <td><span class="badge badge-success">✓ ${l.status}</span></td>
+          <td class="admin-only">
+            ${currentUser && ['ADMIN', 'SUPER_ADMIN'].includes(currentUser.role) ? 
+              `<button class="btn btn-danger btn-sm" onclick="window.hapusLaporan('${l.id}')">Hapus</button>` : 
+              `<span class="text-xs text-muted">-</span>`
+            }
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    window.lihatFotoPenuh = function(id) {
+      const lap = appLaporan.find(l => l.id === id);
+      if (!lap || !lap.foto) return;
+      document.getElementById('full-photo-img').src = lap.foto;
+      openModal('modal-view-photo');
+    };
+
+    window.hapusLaporan = function(id) {
+      if (!currentUser || !['ADMIN', 'SUPER_ADMIN'].includes(currentUser.role)) { showToast('Aksi hanya untuk administrator.'); return; }
+      if (!confirm('Hapus riwayat laporan ini?')) return;
+      appLaporan = appLaporan.filter(l => l.id !== id);
+      if (!saveLocal(STORAGE_KEY_LAPORAN, appLaporan)) return;
+      renderTabelRekap();
+      showToast('Laporan telah dihapus.');
+    };
+
+    function getNamaFileRekap() {
+      const fJenis = document.getElementById('rekap-filter-jenis')?.value || 'SAKIT';
+      const dStart = document.getElementById('rekap-date-start')?.value || 'AWAL';
+      const dEnd = document.getElementById('rekap-date-end')?.value || 'AKHIR';
+      let tag = 'KESEHATAN';
+      if (fJenis === 'PRESTASI') tag = 'PRESTASI';
+      else if (fJenis === 'PELANGGARAN') tag = 'PELANGGARAN';
+      else if (fJenis === 'PRESTASI_PELANGGARAN') tag = 'PRESTASI_DAN_PELANGGARAN';
+      return `REKAP_${tag}_${dStart}_sd_${dEnd}.pdf`;
+    }
+
+    function generatePDFBlob(dataLaporan) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+      const dStart = document.getElementById('rekap-date-start')?.value || 'Awal';
+      const dEnd = document.getElementById('rekap-date-end')?.value || 'Akhir';
+      const fJenis = document.getElementById('rekap-filter-jenis')?.value || 'SAKIT';
+
+      let barisKop2 = 'KESEHATAN';
+      let judulLaporan = 'REKAPITULASI DATA KESEHATAN SISWA';
+      let labelHeaderUraian = 'URAIAN / DIAGNOSA';
+      let labelHeaderTindakan = 'TINDAKAN MEDIS';
+      let labelTandaTanganJabatan = 'Dokter / Paurkes,';
+
+      if (fJenis === 'PRESTASI') {
+        barisKop2 = 'KOMPI SISWA';
+        judulLaporan = 'REKAPITULASI DATA PRESTASI SISWA';
+        labelHeaderUraian = 'URAIAN PRESTASI';
+        labelHeaderTindakan = 'PENGHARGAAN';
+        labelTandaTanganJabatan = 'Komandan Kompi Siswa -';
+      } else if (fJenis === 'PELANGGARAN') {
+        barisKop2 = 'KOMPI SISWA';
+        judulLaporan = 'REKAPITULASI DATA PELANGGARAN SISWA';
+        labelHeaderUraian = 'BENTUK PELANGGARAN';
+        labelHeaderTindakan = 'TINDAKAN DISIPLIN';
+        labelTandaTanganJabatan = 'Komandan Kompi Siswa -';
+      } else if (fJenis === 'PRESTASI_PELANGGARAN') {
+        barisKop2 = 'KOMPI SISWA';
+        judulLaporan = 'REKAPITULASI DATA PRESTASI & PELANGGARAN SISWA';
+        labelHeaderUraian = 'URAIAN / BENTUK';
+        labelHeaderTindakan = 'PENGHARGAAN / TINDAKAN';
+        labelTandaTanganJabatan = 'Komandan Kompi Siswa -';
+      }
+
+      // KOP KIRI ATAS SEJAJAR
+      const kopX = 14;
+      const kopY = 14;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(0, 0, 0);
+
+      const textBaris1 = 'SECABA RINDAM III/SILIWANGI';
+      const textBaris2 = barisKop2;
+
+      const w1 = doc.getTextWidth(textBaris1);
+      const w2 = doc.getTextWidth(textBaris2);
+      const maxW = Math.max(w1, w2);
+
+      doc.text(textBaris1, kopX + (maxW - w1) / 2, kopY);
+      doc.text(textBaris2, kopX + (maxW - w2) / 2, kopY + 4.5);
+
+      doc.setLineWidth(0.5);
+      doc.line(kopX, kopY + 6.5, kopX + maxW, kopY + 6.5);
+
+      // JUDUL DOKUMEN TENGAH
+      doc.setFontSize(12);
+      doc.text(judulLaporan, 105, 30, { align: 'center' });
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.text(`Periode: ${dStart} s/d ${dEnd}`, 105, 35, { align: 'center' });
+
+      // TABEL AUTOTABLE SEJAJAR RAPI (MIDDLE VALIGN)
+      const rows = dataLaporan.map((item, i) => {
+        let labelJenis = 'SAKIT';
+        if (item.jenis === 'PRESTASI' || item.jenis === 'REWARD') labelJenis = 'PRESTASI';
+        else if (item.jenis === 'PELANGGARAN') labelJenis = 'PELANGGARAN';
+        else if (item.jenis === 'PRESTASI_PELANGGARAN') labelJenis = 'PRESTASI/PEL';
+
+        return [
+          (i + 1).toString(),
+          item.tanggal,
+          item.nosis,
+          item.nama,
+          item.pelapor || '-',
+          `K:${item.kompi}/T:${item.pleton}`,
+          labelJenis,
+          item.diagnosa || '-',
+          item.tindakan || '-',
+          '',
+          item.status || 'DISETUJUI'
+        ];
+      });
+
+      doc.autoTable({
+        startY: 40,
+        margin: { left: 12, right: 12 },
+        head: [['NO', 'TGL', 'NOSIS', 'NAMA SISWA', 'PELAPOR', 'KPI/TON', 'JENIS', labelHeaderUraian, labelHeaderTindakan, 'FOTO', 'STATUS']],
+        body: rows,
+        theme: 'grid',
+        tableWidth: 'auto',
+        styles: {
+          fontSize: 7.5,
+          cellPadding: { top: 3, right: 2, bottom: 3, left: 2 },
+          valign: 'middle',
+          overflow: 'linebreak',
+          lineColor: [40, 40, 40],
+          lineWidth: 0.15,
+          textColor: [20, 20, 20]
+        },
+        headStyles: {
+          fillColor: [30, 41, 59],
+          textColor: [255, 255, 255],
+          fontStyle: 'bold',
+          halign: 'center',
+          valign: 'middle',
+          minCellHeight: 8
+        },
+        columnStyles: {
+          0:  { cellWidth: 7,  halign: 'center' },
+          1:  { cellWidth: 14, halign: 'center' },
+          2:  { cellWidth: 13, halign: 'center' },
+          3:  { cellWidth: 22, halign: 'left' },
+          4:  { cellWidth: 21, halign: 'left' },
+          5:  { cellWidth: 13, halign: 'center' },
+          6:  { cellWidth: 14, halign: 'center' },
+          7:  { cellWidth: 25, halign: 'left' },
+          8:  { cellWidth: 24, halign: 'left' },
+          9:  { cellWidth: 13, halign: 'center', minCellHeight: 14 },
+          10: { cellWidth: 11, halign: 'center' }
+        },
+        didDrawCell: function(data) {
+          if (data.section === 'body' && data.column.index === 9) {
+            const lapItem = dataLaporan[data.row.index];
+            if (lapItem && lapItem.foto) {
+              try {
+                const imgW = 14;
+                const imgH = 10.5;
+                const posX = data.cell.x + (data.cell.width - imgW) / 2;
+                const posY = data.cell.y + (data.cell.height - imgH) / 2;
+                doc.addImage(lapItem.foto, undefined, posX, posY, imgW, imgH);
+              } catch (err) {}
+            } else {
+              doc.setFontSize(7);
+              doc.setTextColor(140, 140, 140);
+              doc.text('-', data.cell.x + (data.cell.width / 2), data.cell.y + (data.cell.height / 2), { align: 'center', baseline: 'middle' });
+            }
+          }
+        }
+      });
+
+      // TANDA TANGAN DI BAGIAN BAWAH KANAN (CENTRE ALIGNMENT)
+      let finalY = doc.lastAutoTable.finalY + 12;
+      if (finalY > 240) {
+        doc.addPage();
+        finalY = 20;
+      }
+
+      const todayStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+      const signCenterX = 158;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(0, 0, 0);
+
+      // TANDA TANGAN RESMI: DOKTER/PAURKES UNTUK SAKIT, ATAU KOMANDAN KOMPI SISWA - UNTUK PRESTASI/PELANGGARAN
+      doc.text(`Bandung, ${todayStr}`, signCenterX, finalY, { align: 'center' });
+      doc.text(labelTandaTanganJabatan, signCenterX, finalY + 4.5, { align: 'center' });
+      // Ruang kosong bersih untuk tanda tangan / cap dinas tanpa nama, pangkat, atau NRP
+
+      // FOOTER COPYRIGHT
+      const pageCount = doc.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFont('helvetica', 'italic');
+        doc.setFontSize(7.5);
+        doc.setTextColor(100, 100, 100);
+        doc.text('@copyright StafOpsJar 2026', 12, 290);
+        doc.text(`Halaman ${i} dari ${pageCount}`, 198, 290, { align: 'right' });
+      }
+
+      return doc.output('blob');
+    }
+
+    function downloadBlobFile(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 3000);
+    }
+
+    async function bagikanPDF(target) {
+      const filtered = getFilteredRekap();
+      if (filtered.length === 0) {
+        showToast('Tidak ada data laporan untuk dibagikan.');
+        return;
+      }
+
+      showToast('Menghasilkan berkas PDF untuk dikirim...');
+      const blob = generatePDFBlob(filtered);
+      const filename = getNamaFileRekap();
+      const pdfFile = new File([blob], filename, { type: 'application/pdf' });
+
+      if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+        try {
+          await navigator.share({
+            files: [pdfFile],
+            title: filename,
+            text: `Yth. Komandan, terlampir Rekapitulasi Laporan Secaba Rindam III/Siliwangi (${filename}).`
+          });
+          showToast('Dokumen PDF berhasil dibagikan.');
+          return;
+        } catch (err) {
+          if (err.name !== 'AbortError') console.log(err);
+        }
+      }
+
+      downloadBlobFile(blob, filename);
+      const pesan = encodeURIComponent(`Laporan Resmi Secaba Rindam III/Siliwangi telah diunduh: *${filename}*. Silakan lampirkan berkas PDF ini.`);
+      if (target === 'wa') {
+        window.open(`https://api.whatsapp.com/send?text=${pesan}`, '_blank');
+      } else {
+        window.open(`https://t.me/share/url?url=${pesan}`, '_blank');
+      }
+      showToast('PDF telah diunduh. Silakan lampirkan dokumen ke aplikasi.');
+    }
+
+    function exportSiswaCSV() {
+      if (appSiswa.length === 0) {
+        showToast('Tidak ada data siswa untuk diekspor.');
+        return;
+      }
+
+      let csv = '\uFEFF';
+      csv += 'NO,NOSIS,NAMA,PANGKAT,KOMPI,KELAS,PLETON,SUKU,TTL,AGAMA,GOL_DARAH,PENDIDIKAN_UMUM,TAHUN_LULUS,ALAMAT,STATUS\r\n';
+
+      appSiswa.forEach((s, i) => {
+        csv += `"${i+1}","${s.nosis}","${s.nama}","${s.pangkat}","${s.kompi}","${s.kelas}","${s.pleton}","${s.suku}","${s.ttl}","${s.agama}","${s.golDarah}","${s.pendidikanUmum}","${s.tahunLulus}","${(s.alamat || '').replace(/"/g, '""')}","${s.status}"\r\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const fname = `DATA_NOMINATIF_SISWA_${getLocalDateISO()}.csv`;
+      downloadBlobFile(blob, fname);
+      showToast('Mengunduh data siswa dalam format CSV.');
+    }
+
+    // CETAK DATA NOMINATIF SISWA KE PDF
+    document.getElementById('btn-print-siswa-pdf').onclick = function() {
+      if (appSiswa.length === 0) {
+        showToast('Tidak ada data siswa untuk dicetak.');
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+      // KOP KIRI ATAS
+      const kopX = 14;
+      const kopY = 12;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8.5);
+      doc.setTextColor(0, 0, 0);
+
+      const t1 = 'RESIMEN INDUK DAERAH MILITER III/SILIWANGI';
+      const t2 = 'SECABA RINDAM III/SILIWANGI';
+      const w1 = doc.getTextWidth(t1);
+      const w2 = doc.getTextWidth(t2);
+      const maxW = Math.max(w1, w2);
+
+      doc.text(t1, kopX + (maxW - w1)/2, kopY);
+      doc.text(t2, kopX + (maxW - w2)/2, kopY + 4.5);
+      doc.setLineWidth(0.5);
+      doc.line(kopX, kopY + 6.5, kopX + maxW, kopY + 6.5);
+
+      // JUDUL 2 BARIS TENGAH
+      doc.setFontSize(12);
+      doc.text('DATA NOMINATIF', 148.5, 20, { align: 'center' });
+      doc.setFontSize(9.5);
+      doc.text('SISWA DIKJURBA IF ABIT DIKMABA IF TNI AD GEL III TA 2026', 148.5, 25, { align: 'center' });
+
+      const rows = appSiswa.map((s, i) => [
+        (i + 1).toString(),
+        s.nosis,
+        s.nama,
+        s.pangkat || 'Siswa',
+        s.kompi,
+        s.kelas || '-',
+        s.pleton || '-',
+        s.suku || '-',
+        s.ttl || '-',
+        s.agama || '-',
+        s.golDarah || '-',
+        s.pendidikanUmum || '-',
+        s.tahunLulus || '-',
+        s.alamat || '-',
+        s.status || 'Aktif'
+      ]);
+
+      doc.autoTable({
+        startY: 30,
+        margin: { left: 12, right: 12 },
+        head: [['NO', 'NOSIS', 'NAMA SISWA', 'PKT', 'KPI', 'KLS', 'TON', 'SUKU', 'TTL', 'AGAMA', 'GOL', 'DIKUM', 'LULUS', 'ALAMAT DOMISILI', 'STATUS']],
+        body: rows,
+        theme: 'grid',
+        tableWidth: 'auto',
+        styles: {
+          fontSize: 6.8,
+          cellPadding: { top: 2.5, right: 1.5, bottom: 2.5, left: 1.5 },
+          valign: 'middle',
+          overflow: 'linebreak',
+          lineColor: [40, 40, 40],
+          lineWidth: 0.15,
+          textColor: [20, 20, 20]
+        },
+        headStyles: {
+          fillColor: [27, 48, 32],
+          textColor: [255, 255, 255],
+          fontStyle: 'bold',
+          halign: 'center',
+          valign: 'middle',
+          minCellHeight: 7
+        },
+        columnStyles: {
+          0:  { cellWidth: 7, halign: 'center' },
+          1:  { cellWidth: 14, halign: 'center' },
+          2:  { cellWidth: 30, halign: 'left' },
+          3:  { cellWidth: 11, halign: 'center' },
+          4:  { cellWidth: 8, halign: 'center' },
+          5:  { cellWidth: 9, halign: 'center' },
+          6:  { cellWidth: 8, halign: 'center' },
+          7:  { cellWidth: 14, halign: 'center' },
+          8:  { cellWidth: 32, halign: 'left' },
+          9:  { cellWidth: 15, halign: 'center' },
+          10: { cellWidth: 9, halign: 'center' },
+          11: { cellWidth: 14, halign: 'center' },
+          12: { cellWidth: 11, halign: 'center' },
+          13: { cellWidth: 70, halign: 'left' },
+          14: { cellWidth: 11, halign: 'center' }
+        }
+      });
+
+      // TANDA TANGAN KAURUM
+      let finalYSiswa = doc.lastAutoTable.finalY + 10;
+      if (finalYSiswa > 155) {
+        doc.addPage();
+        finalYSiswa = 20;
+      }
+
+      const todayStrSiswa = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+      const signCenterXSiswa = 240;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(0, 0, 0);
+
+      doc.text(`Bandung, ${todayStrSiswa}`, signCenterXSiswa, finalYSiswa, { align: 'center' });
+      doc.text('Kaurum,', signCenterXSiswa, finalYSiswa + 4.5, { align: 'center' });
+
+      // FOOTER COPYRIGHT
+      const pageCount = doc.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFont('helvetica', 'italic');
+        doc.setFontSize(7.5);
+        doc.setTextColor(100, 100, 100);
+        doc.text('@copyright StafOpsJar 2026', 12, 202);
+        doc.text(`Halaman ${i} dari ${pageCount}`, 285, 202, { align: 'right' });
+      }
+
+      const fname = `DATA_NOMINATIF_SISWA_SECABA_${getLocalDateISO()}.pdf`;
+      const blob = doc.output('blob');
+      downloadBlobFile(blob, fname);
+      showToast('Mengunduh Berkas PDF Data Siswa.');
+    };
+
+    window.addEventListener('DOMContentLoaded', initApp);
+
+  })();
+  </script>
+
+<script>
+(function(){'use strict';
+const root=document.getElementById('tab-running-text');if(!root)return;
+const $=id=>document.getElementById(id);let simulated=null,imageURL='';
+const SAMPLE=[
+ {dayName:'KAMIS',dateStr:'29-10-2026',dateIso:'2026-10-29',items:[
+ {jamKe:'-',start:'09:00',end:'10:00',subject:'Briefing Awal Pendidikan',ke:'-',dari:'-',teacher:'Komandan/Wadan Rindam III/Siliwangi'},
+ {jamKe:'5 - 8',start:'10:15',end:'14:45',subject:'Pertanian',ke:'1-4',dari:'5',teacher:'Mayor Inf Zaenal Arifin; Mayor Inf Achmad H; Kapt Inf Machmud T; Kapt Czi Agus Prianto; Ltt Cba Mulyanto; Sm Suparmin; Serka Yadi M; Srk Uep; Srk Poni; Srk Eko Heri S; Srk Ari N; Srk Jamar; Srt Agus Tri'},
+ {jamKe:'9 - 12',start:'15:00',end:'18:00',subject:'Peternakan',ke:'1-4',dari:'5',teacher:'Myr Inf Haerul Pawae; Myr Inf Joni Manik; Kapt Inf Nur Ananto; Kapt Inf Roni Karmana; Kapt Inf Riyadi; Ltd Inf Asep E.; Srm D. Sarna'}]},
+ {dayName:"JUM'AT",dateStr:'30-10-2026',dateIso:'2026-10-30',items:[{jamKe:'1 - 10',start:'07:00',end:'16:30',subject:'Pertanian (P)',ke:'1-10',dari:'10',teacher:'Mayor Inf Zaenal Arifin; Mayor Inf Achmad H; Kapt Inf Machmud T; Kapt Czi Agus Prianto; Ltt Cba Mulyanto; Sm Suparmin; Serka Yadi M; Srk Uep; Srk Poni; Srk Eko Heri S; Srk Ari N; Srk Jamar; Srt Agus Tri'}]},
+ {dayName:'SABTU',dateStr:'31-10-2026',dateIso:'2026-10-31',items:[]},{dayName:'MINGGU',dateStr:'01-11-2026',dateIso:'2026-11-01',items:[]}
+ ];const RT_STORAGE_KEY='vyata_running_text_schedule_v1';let data=(()=>{try{const saved=localStorage.getItem(RT_STORAGE_KEY);return saved?JSON.parse(saved):JSON.parse(JSON.stringify(SAMPLE))}catch(e){return JSON.parse(JSON.stringify(SAMPLE))}})();
+ function persist(){try{localStorage.setItem(RT_STORAGE_KEY,JSON.stringify(data))}catch(e){msg('Jadwal tampil, tetapi penyimpanan perangkat gagal. Ekspor CSV sebagai cadangan.')}}
+ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const isoNow=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+ const now=()=>simulated?new Date(simulated):new Date();const items=()=>data.flatMap(d=>d.items.map(i=>({...i,dayName:d.dayName,dateStr:d.dateStr,dateIso:d.dateIso}))).sort((a,b)=>(a.dateIso+a.start).localeCompare(b.dateIso+b.start));
+ function msg(s){$('rt-message').textContent=s}
+ function drawTable(){$('rt-body').innerHTML='';data.forEach(d=>{if(!d.items.length){$('rt-body').insertAdjacentHTML('beforeend',`<tr><td>${esc(d.dayName)}<br>${esc(d.dateStr)}</td><td colspan="6" class="rt-small">Belum ada data. Impor jadwal yang sudah diverifikasi.</td></tr>`);return}d.items.forEach(i=>$('rt-body').insertAdjacentHTML('beforeend',`<tr><td>${esc(d.dayName)}<br>${esc(d.dateStr)}</td><td>${esc(i.jamKe)}</td><td>${esc(i.start)}–${esc(i.end)}</td><td>${esc(i.subject)}</td><td>${esc(i.ke)}</td><td>${esc(i.dari)}</td><td>${esc(i.teacher)}</td></tr>`))})}
+ function draw(){const n=now(),iso=isoNow(n),hm=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');$('rt-date').textContent=new Intl.DateTimeFormat('id-ID',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(n).toUpperCase();$('rt-time').textContent=new Intl.DateTimeFormat('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(n);$('rt-mode').textContent=simulated?'MODE SIMULASI':'';const list=items(),today=list.filter(i=>i.dateIso===iso),active=today.find(i=>hm>=i.start&&hm<i.end),next=list.find(i=>i.dateIso>iso||(i.dateIso===iso&&i.start>hm));$('rt-status').textContent=active?'● SESI AKTIF BERLANGSUNG':next?'● MENUNGGU SESI BERIKUTNYA':'● DI LUAR JADWAL';$('rt-current').innerHTML=active?`<b style="font-size:18px;color:#facc15">${esc(active.subject)}</b><p>${esc(active.dayName)} · ${esc(active.dateStr)} · ${esc(active.start)}–${esc(active.end)}</p><p>Pengajar: ${esc(active.teacher)}</p>`:'Tidak ada sesi aktif saat ini.';$('rt-next').innerHTML=next?`<b style="font-size:18px;color:#67e8f9">${esc(next.subject)}</b><p>${esc(next.dayName)} · ${esc(next.dateStr)} · ${esc(next.start)}–${esc(next.end)}</p><p>Pengajar: ${esc(next.teacher)}</p>`:'Belum ada agenda berikutnya.';const text=list.length?list.map(i=>`${i.dayName}, ${i.dateStr} • ${i.start}–${i.end} • ${i.subject} • Pengajar: ${i.teacher}`).join('　✦　'):'DATA JADWAL BELUM TERSEDIA';$('rt-track').innerHTML=`<span>${esc(text)}</span><span aria-hidden="true">${esc(text)}</span>`;$('rt-summary').textContent=active?`Berlangsung: ${active.subject} (${active.start}–${active.end})`:next?`Agenda selanjutnya: ${next.subject} — ${next.dayName}, ${next.start}`:'Tidak ada sesi terjadwal.';drawTable()}
+ function csvCell(v){return '"'+String(v??'').replace(/"/g,'""')+'"'}function csv(){return '\ufeff'+[['Hari','Tanggal','Jam Ke','Mulai','Selesai','Mata Pelajaran','Ke','Dari','Pengajar'],...data.flatMap(d=>d.items.map(i=>[d.dayName,d.dateStr,i.jamKe,i.start,i.end,i.subject,i.ke,i.dari,i.teacher]))].map(r=>r.map(csvCell).join(',')).join('\r\n')}
+ function dl(name,content,type='text/csv;charset=utf-8'){const u=URL.createObjectURL(new Blob([content],{type})),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+ function parseCSV(t){let rows=[],r=[],f='',q=false;for(let i=0;i<t.length;i++){let c=t[i];if(c==='"'&&q&&t[i+1]==='"'){f+='"';i++}else if(c==='"')q=!q;else if(c===','&&!q){r.push(f);f=''}else if((c==='\n'||c==='\r')&&!q){if(c==='\r'&&t[i+1]==='\n')i++;r.push(f);if(r.some(x=>x.trim()))rows.push(r);r=[];f=''}else f+=c}r.push(f);if(r.some(x=>x.trim()))rows.push(r);return rows}
+ function dateISO(v){v=String(v||'').trim();if(/^\d{4}-\d{2}-\d{2}$/.test(v))return v;let m=v.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/);return m?`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`:''}
+ async function importFile(file){if(!file)return;try{let rows;if(file.name.toLowerCase().endsWith('.csv'))rows=parseCSV(await file.text());else{if(!window.XLSX)throw Error('Pustaka Excel tidak tersedia; simpan berkas sebagai CSV.');const wb=XLSX.read(await file.arrayBuffer(),{type:'array'});rows=XLSX.utils.sheet_to_json(wb,{header:1,defval:''})}if(!rows.length)throw Error('Berkas kosong.');const norm=v=>String(v||'').trim().toLowerCase().replace(/[\s/_-]+/g,'');const h=rows[0].map(norm),find=a=>h.findIndex(x=>a.includes(x));const ix={day:find(['hari']),date:find(['tanggal','tgl']),jam:find(['jamke','jam']),start:find(['mulai','start','pukulmulai']),end:find(['selesai','akhir','pukulselsai']),subject:find(['matapelajaran','kegiatan','pelajaran','subject']),ke:find(['ke']),dari:find(['dari']),teacher:find(['pengajar','gadikgumil','gadik','gumil','guru'])};if([ix.date,ix.start,ix.end,ix.subject].some(x=>x<0))throw Error('Kolom wajib tidak sesuai templat.');const map=new Map();rows.slice(1).forEach(r=>{const iso=dateISO(r[ix.date]);if(!iso)return;const day=ix.day>=0&&r[ix.day]?String(r[ix.day]).toUpperCase():new Intl.DateTimeFormat('id-ID',{weekday:'long'}).format(new Date(iso+'T12:00:00')).toUpperCase();const dateStr=iso.slice(8,10)+'-'+iso.slice(5,7)+'-'+iso.slice(0,4);if(!map.has(iso))map.set(iso,{dayName:day,dateStr,dateIso:iso,items:[]});const g=k=>ix[k]>=0?String(r[ix[k]]??'').trim():'';map.get(iso).items.push({jamKe:g('jam'),start:g('start'),end:g('end'),subject:g('subject'),ke:g('ke'),dari:g('dari'),teacher:g('teacher')})});if(!map.size)throw Error('Tidak ada baris tanggal yang valid.');data=[...map.values()].sort((a,b)=>a.dateIso.localeCompare(b.dateIso));persist();draw();msg(`Impor berhasil: ${items().length} sesi dari ${data.length} tanggal.`)}catch(e){msg('Impor gagal: '+e.message)}}
+ $('rt-apply-sim').onclick=()=>{if(!$('rt-sim-date').value||!$('rt-sim-time').value)return msg('Isi tanggal dan jam simulasi.');simulated=$('rt-sim-date').value+'T'+$('rt-sim-time').value;draw();msg('Mode simulasi aktif.')};$('rt-reset-sim').onclick=()=>{simulated=null;draw();msg('Kembali ke jam perangkat.')};$('rt-template').onclick=()=>dl('templat_jadwal_pendidikan.csv','\ufeffHari,Tanggal,Jam Ke,Mulai,Selesai,Mata Pelajaran,Ke,Dari,Pengajar\r\nKAMIS,29-10-2026,1,07:00,08:00,Contoh Pelajaran,1,4,Nama Pengajar\r\n');$('rt-export').onclick=()=>dl('jadwal_pendidikan.csv',csv());$('rt-file').onchange=e=>{importFile(e.target.files[0]);e.target.value=''};$('rt-reset').onclick=()=>{if(confirm('Pulihkan data contoh? Data impor akan diganti.')){data=JSON.parse(JSON.stringify(SAMPLE));persist();draw();msg('Data contoh dipulihkan.')}};$('rt-image-btn').onclick=()=>$('rt-image').click();$('rt-image').onchange=e=>{const f=e.target.files[0];if(!f)return;if(imageURL)URL.revokeObjectURL(imageURL);imageURL=URL.createObjectURL(f);$('rt-image-view').src=imageURL;$('rt-image-preview').classList.remove('hidden');msg('Gambar hanya sebagai referensi visual; data tabel harus diimpor melalui Excel/CSV.')};$('rt-image-remove').onclick=()=>{$('rt-image-preview').classList.add('hidden');$('rt-image-view').removeAttribute('src');if(imageURL)URL.revokeObjectURL(imageURL);imageURL=''};
+ const today=new Date();$('rt-sim-date').value=isoNow(today);$('rt-sim-time').value=[today.getHours(),today.getMinutes(),today.getSeconds()].map(n=>String(n).padStart(2,'0')).join(':');draw();setInterval(()=>{if(!simulated)draw()},1000);
+})();
+</script>
+
+</body>
+</html>
